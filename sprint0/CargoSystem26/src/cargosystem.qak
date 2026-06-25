@@ -1,0 +1,74 @@
+System cargosystem
+
+// ========================================================================
+// 1. MESSAGGI DATI DI INPUT — Interfaccia robotsmart26
+// (Vincolo esterno preesistente fornito dal committente)
+// ========================================================================
+Event    alarm            : alarm(X)                "Allarme hardware emesso dal robot"
+Dispatch move             : move(M)                 "MOVE = l|r|a|d|h  mosse ARIL sincrone"
+Dispatch setrobotstate    : setpos(X,Y,D)           "Forza posizione (X,Y) e direzione D"
+Request  setdirection     : dir(D)                  "Richiesta rotazione D=up|down|left|right"
+Reply    setdirectiondone : pos(PX,PY)              for setdirection
+Request  getrobotstate    : getrobotstate(ARG)      "Richiesta stato corrente"
+Reply    robotstate       : robotstate(POS,DIR)     for getrobotstate
+
+// ========================================================================
+// 2. MESSAGGI APPLICATIVI — Vocabolario del Dominio
+// ========================================================================
+
+// --- IOPort <-> CargoService ---
+Request  loadRequest   : loadRequest(X)          "Richiesta di carico dall'operatore"
+Reply    loadEngaged   : loadEngaged(SLOT)       for loadRequest
+Reply    retryLater    : retryLater(X)           for loadRequest
+Reply    loadRejected  : loadRejected(X)         for loadRequest
+
+// --- CargoService -> IOPort (Feedback Asincroni) ---
+Event    timeOut       : timeOut(X)              "Scadenza regola dei 30 secondi"
+Event    loadEnded     : loadEnded(X)            "Fine procedura di carico"
+Event    endOOS        : endOOS(X)               "Fine stato Out Of Service"
+Dispatch toggleLedBlink: toggleLedBlink(X)       "Comando LED on|off"
+
+// --- Sensor -> CargoService (Eventi Proattivi di Business) ---
+Event    containerDetected : containerDetected(X) "Emesso se D < DFREE/2 per 3s"
+Event    sensorAlarm       : sensorAlarm(X)       "Emesso se D > DFREE per 3s"
+
+
+// ========================================================================
+// 3. NODI COMPUTAZIONALI LOGICI (Distribuzione del Sistema)
+// ========================================================================
+Context ctxcargosystem    ip [host="localhost" port=8020]
+Context ctxrobotservice26 ip [host="localhost" port=8025]
+Context ctxsensor         ip [host="localhost" port=8135]
+
+// Dichiarazione dell'entità esterna fornita dal committente
+ExternalQActor robotsmart26 context ctxrobotservice26
+
+// ========================================================================
+// 4. FORMALIZZAZIONE DEGLI ATTORI (Scheletro Comportamentale)
+// ========================================================================
+
+QActor cargoservice context ctxcargosystem {
+    State s0 initial {
+        println("$name | starts - Inizializzazione Orchestratore") color green
+    }
+    Goto idle
+
+    State idle {
+        // Stato di attesa reattiva delle richieste (loadRequest) o eventi (sensorAlarm)
+    }
+}
+
+QActor ioport context ctxcargosystem {
+    State s0 initial {
+        println("$name | starts - Boundary Interfaccia Utente") color blue
+    }
+}
+
+QActor sensor context ctxsensor {
+    [# var DFREE #] // Costante nominale di dominio (distanza a vuoto)
+
+    State s0 initial {
+        println("$name | starts - Boundary Sensore") color cyan
+        // Il sensore applicherà logicamente le soglie DFREE per emettere eventi
+    }
+}

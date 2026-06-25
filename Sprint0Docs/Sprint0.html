@@ -1,0 +1,912 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Sprint0</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+
+	
+</style></head><body>
+<h1 class="page-title" dir="auto">Introduction</h1>
+
+<div style="display:contents" dir="auto"><p id="3844730f-99ce-806f-9863-e231dca2b642" class="">Una compagnia di spedizioni marittime di merci (d&#x27;ora in poi, semplicemente compagnia) intende automatizzare le operazioni di carico dei container nella <strong>stiva</strong> della nave (o semplicemente stiva). A tal fine, la compagnia prevede di impiegare un Robot a Guida Differenziale (d&#x27;ora in poi, chiamato <em><strong>cargorobot</strong></em>). La stiva è un&#x27;area piana e rettangolare dotata di una porta di Input/Output (<em><strong>IOPort</strong></em>). L&#x27;area fornisce <strong>4</strong> slot per lo stoccaggio dei container e uno slot denominato <em>slot5</em>.  
+	
+	<img src="Sprint0 Analisi dei Requisiti/imgtemafinale.png">
+
+	<br/>Nell&#x27;immagine sopra:<br/>• Gli <strong>slot1-4</strong> rappresentano le aree della stiva riservate per stoccare un container ciascuna.  <br/>• Lo <strong>slot5</strong> rappresenta un&#x27;area in cui il <em>cargorobot</em> deve depositare temporaneamente un container, prima di collocarlo in uno degli slot1-4. Durante lo stoccaggio temporaneo, un dispositivo &#x27;marker&#x27; (marcatore) etichetta il container con un codice a barre identificativo e segnala quando questa attività di marcatura è completata.  <br/>• L&#x27;<strong>IOPort</strong> è un dispositivo dotato di un pulsante e di un display. Il pulsante viene premuto dal cliente per inviare una richiesta di carico di un container sulla nave. Il display è utilizzato per mostrare la risposta alla richiesta e per visualizzare lo stato attuale della stiva.  <br/>• Il <strong>sensore</strong> associato all&#x27;<em>IOPort</em> è un dispositivo (un sonar) utilizzato per rilevare la presenza di un container, quando misura una distanza D tale che D &lt; DFREE/2, per un tempo ragionevole (es. <strong>3</strong> secondi).  </p></div>
+
+
+	
+
+<h1 class="page-title" dir="auto">Requirements</h1>
+<div style="display:contents" dir="auto">
+La compagnia ci chiede di costruire un servizio chiamato <strong>cargoservice</strong> che dovrebbe funzionare come segue.  <br/>Il <em>cargoservice</em> è in grado di ricevere una richiesta di carico di un container inviata da un cliente utilizzando il pulsante dell&#x27;<em>IOPort</em>.  <br/>• Invia la risposta retrylater (riprova più tardi) se l&#x27;<em>IOPort</em> è attualmente occupata da un container o se il sistema è <em>Out of service</em> (fuori servizio).  <br/>• Rifiuta la richiesta quando la stiva è già piena, ovvero gli slot1-4 sono già occupati.  <br/>• Altrimenti, considera il sistema come <strong>engaged</strong> (impegnato), individua uno slot libero e restituisce come risposta il nome di tale slot riservato. Mentre è impegnato, il sistema deve far lampeggiare un Led.  <br/>Quando la richiesta di carico viene accettata, il cliente deve spostare il container nell&#x27;area del sensore entro un tempo prefissato (es. <strong>30</strong> secondi), altrimenti il sistema diventa <em>disengaged</em> (disimpegnato). Successivamente, il <em>cargoservice</em> utilizza il <em>cargorobot</em> per spostare il container dall&#x27;<em>IOPort</em> allo <em>slot5</em> (per la marcatura del container) e poi allo slot riservato. Il servizio deve inoltre mostrare sul display dell&#x27;<em>IOPort</em>:  <br/>• lo stato attuale della stiva  <br/>• il messaggio <strong>&#x27;Service working&#x27;</strong>, quando tutto procede regolarmente  <br/>• il messaggio <strong>&#x27;Out of service&#x27;</strong> se il sensore sonar misura una distanza D &gt; DFREE per almeno <strong>3</strong> secondi (segnalando forse un guasto del sonar).  </p></div>
+</div>
+
+<h1 class="page-title" dir="auto">Requirement analysis</h1>
+
+<article id="3884730f-99ce-8068-94b0-f5e57041da83" class="page sans"><header><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-80a0-ad24-d254580eb01a" class="numbered-list" start="1"><li><strong>Hold e Slot:</strong></li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8064-a76b-c18a1d513238" class="">I requisiti richiedono la gestione dello spazio fisico della stiva (<em>Hold</em>) e dei relativi sotto-spazi (<em>Slots</em>).</p></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8097-9032-ca0fde301e2d" class="bulleted-list"><li style="list-style-type:disc"> <strong>L&#x27;Unità Robotica:</strong> Definita la dimensione del DDR come un quadrato di lato L in cui il robot stesso è inscrivibile, tale dimensione viene assunta come l&#x27;unità di misura spaziale del sistema.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8038-b67b-f7c0e93511fa" class="bulleted-list"><li style="list-style-type:disc"><strong>Modello della Hold:</strong> In ottemperanza al testo, la stiva presenta larghezza e lunghezza esprimibili in unità robotiche. Pertanto, la <em>Hold</em> viene formalizzata logicamente come una <strong>griglia discreta (matrice)</strong> divisa in celle di dimensione L. In posizioni specifiche di questa griglia (indicate da coordinate logiche X, Y) sono posizionati gli Slot e la porta di Input/Output (<em>IOPort</em>).<div style="display:contents" dir="ltr"><figure id="3884730f-99ce-80c3-879e-eb20123fc5a8" class="image" style="text-align:center"><a href="Sprint0%20Analisi%20dei%20Requisiti/canvas.png"><img style="width:288px" src="Sprint0%20Analisi%20dei%20Requisiti/canvas.png"/></a></figure></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js" integrity="sha512-xKcnbsdT0KMoA4yrozkqZM1XJVTrPsjdQwvigxlAlxEDu8YDvC/jl+LfVqn0fY3Vs6m2y4a89JCHEIA/Z9zpmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3884730f-99ce-8090-8a4c-cc57e8a15f04" class="code code-wrap"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">
+public class Hold {
+		private int D         //dimensione unità robotica in metri
+    private int width;    // larghezza hold (in unità robotiche)
+    private int length;   // lunghezza hold (in unità robotiche)
+    private int[][] grid;  //griglia hold
+}</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80ea-b34b-d420abfd360b" class="bulleted-list"><li style="list-style-type:disc"><strong>Vincolo di Capacità e Slot 1-4:</strong> Il sistema ha un limite quantitativo rigido. La capienza massima è di 4 container. Ognuno degli slot 1-4 rappresenta una zona quadrata di un&#x27;unità robotica adibita allo stoccaggio permanente. Ogni slot è un’entità logica caratterizzata da uno stato (Libero o Occupato).</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80c5-bbdc-e62accca70b8" class="bulleted-list"><li style="list-style-type:disc"> <strong>Slot 5:</strong> Anch’esso una zona quadrata di un&#x27;unità robotica, ma non funge da stoccaggio permanente. Serve esclusivamente come area temporanea per la fase di <em>barcode labeling</em> prima che il container venga trasferito nel suo slot riservato.<div style="display:contents" dir="auto"><pre id="3884730f-99ce-80cb-8640-e04809b4553e" class="code code-wrap"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public class Slot {
+    private String name;              // &quot;SlotN&quot;
+    private boolean occupato = false; // stato dello slot (occupato o libero)
+}</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80c6-811e-d1e0970fbd93" class="bulleted-list"><li style="list-style-type:disc"><strong>Tracciamento dello Stato:</strong> In base ai requisiti, cargoservice deve mantenere costantemente traccia dello stato di occupazione di ciascuno slot per poter implementare correttamente la logica di accettazione o rifiuto delle nuove richieste di carico.<br/></li></ul></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-8032-bc45-f9208a5325a7" class="numbered-list" start="2"><li><strong>DDR/CargoRobot:</strong></li></ol></div><div style="display:contents" dir="auto"><p id="80c38971-ee26-4539-9451-b6610d23b952" class="">Al fine di chiarire i vincoli tecnologici e operativi legati all’unità mobile, è stato effettuato un confronto diretto con il committente:</p></div><div style="display:contents" dir="auto"><blockquote id="81b72366-60bc-4aff-aef3-e2f107272a50" class=""><strong>Domanda al committente:</strong> Il software di controllo di basso livello del DDR viene fornito come asset preesistente o deve essere interamente realizzato da noi?<div style="display:contents" dir="auto"><p id="eda790ea-47e8-4dca-9934-ba8465a05e51" class=""><strong>Risposta:</strong> La software house ha già a disposizione un software pregresso che si presenta come un servizio per la gestione del <em>Differential Drive Robot</em>, denominato <code>robotsmart26</code>. Questo componente fornisce già un’interfaccia nativa basata su comandi in linguaggio ARIL (<em>Abstract Robot Interaction Language</em>).</p></div></blockquote></div><div style="display:contents" dir="auto"><p id="1de52156-ffb7-4506-b7bb-68cb2c146dca" class=""><strong>Vincolo di Interfaccia Esterna (Dati di Input)</strong><br/>L&#x27;esistenza di <code>robotsmart26</code> rappresenta un vincolo di progetto esogeno. Tale componente impone che l&#x27;interazione con l&#x27;attuatore fisico avvenga rigorosamente tramite lo scambio esplicito di messaggi. Per il controllo del robot e del suo stato, l’interfaccia fornita dal committente è la seguente:</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3884730f-99ce-80f1-80b6-c70f32f45c1e" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">// --- Interfaccia con robotsmart26 (dato di input preesistente) ---
+Event    alarm            : alarm(X)                &quot;event at application level&quot;
+Dispatch move             : move(M)                 &quot;MOVE = l|r|a|d|h   mosse ARIL sincrone&quot;
+Dispatch setrobotstate    : setpos(X,Y,D)           &quot;set robot position to (X,Y) direction D=up|down|left|right&quot; 
+Request  setdirection     : dir(D)                  &quot;set robot direction to D=up|down|left|right&quot; 
+Reply    setdirectiondone : pos(PX,PY)              for setdirection
+Dispatch changedir        : changedir(X)            &quot;autodispatch interno&quot;  
+Request  getrobotstate    : getrobotstate(ARG)      &quot;request robot state ARG unused&quot;
+Reply    robotstate       : robotstate(POS,DIR)     for getrobotstate  &quot;POS-&gt;pos(X,Y) DIR-&gt;up|down|left|right&quot;</code></pre></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80ed-895b-f42eb5ed5ea5" class="">Nello specifico, il payload associato al comando <code>move</code> utilizza il linguaggio <strong>ARIL</strong>, il quale fornisce un vocabolario standard per esprimere i comandi base di spostamento discreto del robot nell&#x27;ambiente.</p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-809a-b47c-ddb3a60ca67e" class="">Si può notare che l’uso di RobotSmart26 introduce la necessità di definire esplicitamente i messaggi di comando, con cui è possibile interagire con il robot stesso, rendendo evidente come l’applicazione interagisce con il robot. Per questi motivi, robotsmart26 rientra nella categoria di sistemi a <strong>microservizi</strong></p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80ef-a18c-f28fc61d6574" class="">
+</p></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-80a1-88a1-eadddce32c2f" class="numbered-list" start="4"><li><strong>CargoService</strong></li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-800d-9836-d2cbd1f339c6" class="">L’entità <em>CargoService</em> funge da orchestratore centrale del sistema. Il suo ruolo principale è custodire lo stato applicativo globale, ricevere ed elaborare le richieste di carico provenienti dall&#x27;esterno e inviare i comandi operativi al robot per la movimentazione dei container.</p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-804a-b085-d41541c05dac" class="">Dal punto di vista comportamentale, come delineato dai requisiti del committente, l’orchestratore possiede una duplice natura:</p></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80a1-b2a9-cec87ecb6051" class="bulleted-list"><li style="list-style-type:disc"><strong>Proattiva:</strong> esegue attivamente le sequenze di pianificazione e coordina le fasi di movimento del robot quando una richiesta viene accettata.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80de-84c5-c99fd7743ca0" class="bulleted-list"><li style="list-style-type:disc"><strong>Reattiva:</strong> rimane costantemente in ascolto di eventi esogeni, come lo scorrere del tempo (timeout), messaggi di allarme o variazioni di stato dei sensori ambientali.</li></ul></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80b3-8cd2-f7a2f337c28c" class="">Dai requisiti inoltre si può notare che il sistema nasce già In un contesto distribuito l&#x27;interazione via chiamata a procedura non è praticabile, pertanto CargoService viene modellato come microservizio: un componente software indipendente che comunica esclusivamente tramite scambio di messaggi.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-807d-b0ee-e831211fa4bd" class="">Il modello computazionale naturale per realizzare microservizi che interagiscono tramite messaggi è il <strong>modello ad attori.</strong> Le entità che interagiscono nel sistema vengono formalizzate come attori, in quanto presentano le seguenti caratteristiche: </p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-808a-93fe-fc295ac0e458" class="bulleted-list"><li style="list-style-type:disc">Ogni attore è un’entità completamente incapsulata e in quanto tale lo stato e la struttura interna non sono visibili dall’esterno, pertanto l’unico modo per interagire con un attore è tramite scambio di messaggi asincroni. In questo modo la logica si sposta sul contratto di interazione tra gli attori. Si supera così la sincronizzazione tra le parti interagenti imposta dal meccanismo di trasferimento del controllo tipico della chiamata a procedura dell&#x27;OOP, fornendo al sistema disaccoppiamento e flessibilità grazie all’interazione asincrona tramite scambio di messaggi.</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8039-913b-f868df034ac9" class="bulleted-list"><li style="list-style-type:disc">Gli attori permettono di gestire la concorrenza in modo naturale, modellando ogni entità con comportamento autonomo come un componente indipendente che si coordina con gli altri esclusivamente tramite scambio di messaggi, senza condivisione di stato.</li></ul></div><div style="display:contents" dir="auto"><hr id="3884730f-99ce-806e-8c2f-d2fb30b56c29"/></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-806b-b2f5-c78786d4423a" class=""><strong>Modello dell’Interazione</strong></p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-801c-a321-c37f7cae31dd" class="">Il <em>cargoservice</em> riceve le richieste di carico di un container inviate dal cliente tramite il pulsante dell&#x27;<em>IOPort</em>. Pertanto, il servizio viene interrogato dall’<em>IOPort</em> attraverso una specifica richiesta asincrona (<em>loadRequest</em>). </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80a7-8005-d799dd00d9b5" class="">A questa richiesta, l’orchestratore associa una risposta diversa valutando rigorosamente il proprio stato interno:</p></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80df-9572-f5f28579de1a" class="bulleted-list"><li style="list-style-type:disc"><strong>loadEngaged</strong>: Il sistema ha capienza sufficiente ed è disponibile per accettare una nuova richiesta. Comunica l’avvenuta presa in carico e lo slot riservato.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80e9-8783-cecf4e4fff14" class="bulleted-list"><li style="list-style-type:disc"><strong>loadRejected</strong>: La richiesta viene respinta in via definitiva poiché la stiva ha raggiunto la capienza massima consentita (4 container).</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8025-b833-c8d3b9850e5e" class="bulleted-list"><li style="list-style-type:disc"><strong>retryLater</strong>: La richiesta viene momentaneamente rifiutata poiché l’<em>IOPort</em> è correntemente occupata o il sistema è impegnato in altre operazioni critiche. L’utente è invitato a riprovare più tardi.</li></ul></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80bc-b04d-e7a8efa8e8d6" class=""><strong>Gestione del Tempo e degli Eventi Sensoriali</strong></p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8079-a686-e9c27f9605be" class="">Il <em>cargoservice</em> deve garantire il rispetto dei vincoli temporali previsti per il trasferimento del container nella sensor area (la regola dei 30 secondi). Se il tempo limite scade, l’orchestratore forza  il ritorno del sistema allo stato <em>disengaged</em> e ne informa contestualmente <em>IOPort </em>attraverso un messaggio asincrono (<code>Event </code><em><code>timeout</code></em><em>)</em>, affinché l’interfaccia utente possa aggiornarsi. </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80a1-aaea-d39d3fa4983c" class="">A completamento della sua natura reattiva, l’orchestratore gestisce in modo asincrono i dati provenienti dall’ambiente fisico. Nello specifico, viene informato l’avvenuto posizionamento di un container nella zona di carico tramite un evento emesso dal sensore (<em><code>containerDetected</code></em>). Analogamente, qualora il sonar rilevi un’anomalia prolungata (sintomo di un guasto). Il CargoService intercetta l’evento di allarme(<em><code>sensorAlarm</code></em>) e reagisce ponendo immediatamente il sistema in uno stato Out of service.</p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8024-93dc-d330dfe52b59" class=""><strong>Interazione con il DDR</strong></p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8032-aa1f-cc08a5aec21b" class="">L&#x27;interazione tra <em>CargoService</em> e <em>RobotSmart26</em> avviene in modo asincrono tramite scambio di messaggi. Poiché il <em>CargoService</em> deve coordinare una sequenza operativa rigorosa (raggiungere l&#x27;IOPort, simulare la marcatura nello Slot 5 e depositare nello slot finale). Per fare ciò CargoService deve avere a disposizione l’interfaccia definita dal committente, con cui è possibile comunicare con il robot stesso. </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8024-af6f-cb01f707d6ed" class=""> <strong>Domanda al Committente:</strong> Dai requisiti si eveince che c&#x27;è un led, dove si trova e come va realizzato? </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8086-b41b-d664e4b21f8e" class=""><strong>Risposta: </strong>Il led può essere sia un led fisico, se disponibile oppure può essere un led virtuale che viene acceso o spento da qualche parte. Il posto in cui verebbe acceso è la stessa pagina web<br/>precedente. </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80a8-8790-da432b318efd" class="">Il cargoservice deve poter iniziare o interrompere il LED (toggleLedBlink), sia che sia realizzato come fisico che come componente web. Nel caso sia web deve poter comunicare con la IOPort per riferire l’accensione del LED. </p></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-80d8-897c-d3f1497441f9" class="numbered-list" start="4"><li><strong>IOPort</strong></li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8031-80fa-f0c6429fe6bb" class=""><strong>Definizione e Ruolo Architetturale:</strong></p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8016-b663-dd7cfbf9c88f" class="">L’entità <strong>IOPort </strong>rappresenta il canale di comunicazione tra l’operatore umano (o sistemi esterni) e il CargoService.  Ha la responsabilità bidirezionale di inoltrare i comandi dell&#x27;utente verso il sistema logico (Input) e di mostrare i feedback visivi di ritorno (Output).</p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8083-81b3-fa0f80beb734" class=""><strong>Domanda al committente: </strong>Il software che rappresenta la IOPort è già disponibile o dobbiamo costruirlo noi?</p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8037-af3e-d1ddb10c952d" class=""><strong>Risposta: </strong>Il componente deve essere sviluppato da zero. Sebbene sia possibilile sviluppare l’<strong>IOPort</strong> come un pannello fisico reale (con pulsanti meccanici e schermi fisici), in questo progetto deve essere realizzata rigorosamente come un’interfaccia web (<strong>Web GUI</strong>). Si comporrà di due elementi virtuali: un pulsante (Push Button) che funge da dispositivo di input per l’invio della richiesta di carico, e un’area di testo dinamica (Display) che funge da dispositivo di output per mostrare lo stato del sistema all’utente. </p></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8037-8f4c-eacae1ef336b" class="">Inoltre la pagina web con pulsante, display e LED virtuale, è un processo separato che gira nel browser di un nodo computazionale svincolato da quello di cargorobot. </p></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-8058-a739-f238a645428d" class="numbered-list" start="5"><li><strong>Sensor</strong></li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-801b-93b6-f3e84196f5b5" class="">L’entità <strong>Sensor</strong> interagisce unicamente con CargoService con lo scopo di rilevare la presenza di un container da caricare, o, eventualmente, per comunicare un’anomalia critica che pone il sistema in stato di Out of Service. Come si evince dall’analisi del dominio, Sensor non ha rapporto o comunicazione con l&#x27;IOPort. È dotata di una duplice natura:</p></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80db-85b0-f8125882f1f2" class="bulleted-list"><li style="list-style-type:disc">Reattiva: Il sensore reagisce in tempo reale agli stimoli fisici dell’ambiente, rilevando le variazioni di distanza causate da un inserimento di un container o da un’ostruzione. </li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-806b-8661-cff33da616d1" class="bulleted-list"><li style="list-style-type:disc">Proattiva: Nel modello, il sensore non agisce come un componente passivo da interrogare (no polling), ma prende l’iniziativa. Valuta autonomamente i dati grezzi e, al soddisfacimento di una regola di business, genera e propaga tramite Broadcast un evento logico di alto livello.</li></ul></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80c6-a6fd-f1347539ef35" class="">I requisiti impongono regole di business precise basate su parametri quantitativi e temporali che il <em>Sensor</em> deve logicamente applicare. Data una distanza nominale a vuoto denominata DFREE:</p></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-8057-a1e8-d8ac958dbbc7" class="numbered-list" start="1"><li><strong>Rilevamento Container (</strong><code><strong>containerDetected</strong></code><strong>):</strong> L&#x27;evento deve essere emesso esclusivamente se la distanza rilevata soddisfa la condizione D &lt; DFREE/2 in modo stabile per un tempo T ≥ 3 secondi.</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-8058-83fd-fc5829c9d06c" class="numbered-list" start="2"><li><strong>Allarme Guasto (</strong><code><strong>sensorAlarm</strong></code><strong>):</strong> L&#x27;evento critico deve essere emesso qualora la distanza rilevata soddisfi la condizione D &gt; DFREE in modo continuo per un tempo T ≥ 3 secondi.</li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80b2-89f3-e48b621be772" class="">Per garantire il disaccoppiamento e gestire la sua natura asincrona, il Sensor deve essere formalizzato come un servizio a sé stante dedicato al filtraggio dei dati del dispositivo di rilevamento. </p></div><div style="display:contents" dir="auto"><h4 id="3884730f-99ce-809e-b0c6-eb609f838586" class="">Struttura del sistema</h4></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-80ad-ab41-d36f491d69ea" class="">La responsabilità di eseguire codice applicativo, non è attribuibile al nodo che realizza il CargoRobot, nè al nodo del sensore. Il sistema è quindi strutturato sui seguenti nodi computazionali:</p></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-805f-a1ac-ef1b754189b0" class="numbered-list" start="1"><li>Il nodo che supporta l’esecuzione del servizio fornito dal committente robotsmart26 </li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-8024-b8d2-f3f5f15eabc8" class="numbered-list" start="2"><li>Il nodo che supporta l’esecuzione del componente che realizza l’applicazione richiesta ossia cargoservice</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-80d1-bc19-c11303d2daf5" class="numbered-list" start="3"><li>Il nodo su cui, sfruttando il principio del disaccoppiamento, esegue il Sensor (come potrebbe essere un dispositivo PicoW).</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3884730f-99ce-804a-b321-f9d66e680b16" class="numbered-list" start="4"><li>Il nodo computazionale su cui esegue IOPort ossia la pagina web con pulsante, display e LED virtuale. CargoService interagisce con questo nodo attraverso il QActor IOPort. </li></ol></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8077-89c1-d007261a6a4f" class="">Pertanto già dai requisiti si evince che il sistema è distribuito su quattro nodi, in cui i componenti sono logicamente (micro)servizi, possiamo formalizzare la struttura del sistema usando il linguaggio qak, fornito direttamente dalla software house. Questo linguaggio modellativo è stato sviluppato internamente per definire ed eseguire sistemi basati sullo scambio di messaggi, superando i limiti delle invocazioni dirette a metodi su nodi locali.</p></div><div style="display:contents" dir="ltr"><figure id="3884730f-99ce-8077-9912-d06011d70cf3" class="image"><a href="Sprint0%20Analisi%20dei%20Requisiti/d8301745-e6bc-4807-8762-d09177deb0c5.png"><img style="width:240px" src="Sprint0%20Analisi%20dei%20Requisiti/d8301745-e6bc-4807-8762-d09177deb0c5.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8076-b4ee-d0d7aa5d5540" class=""><strong>Modello QAK Analisi di Requisiti:</strong></p></div><div style="display:contents" dir="auto"><pre id="9104741d-c92f-438e-b2fa-ee48100a1334" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">System cargosystem
+
+Event    alarm            : alarm(X)                &quot;Allarme emesso dal robot&quot;
+Dispatch move             : move(M)                 &quot;MOVE = l|r|a|d|h  mosse ARIL sincrone&quot;
+Dispatch setrobotstate    : setpos(X,Y,D)           &quot;Forza posizione (X,Y) e direzione D&quot;
+Request  setdirection     : dir(D)                  &quot;Richiesta rotazione D=up|down|left|right&quot;
+Reply    setdirectiondone : pos(PX,PY)              for setdirection
+Request  getrobotstate    : getrobotstate(ARG)      &quot;Richiesta stato corrente&quot;
+Reply    robotstate       : robotstate(POS,DIR)     for getrobotstate
+
+// --- IOPort &lt;-&gt; CargoService ---
+Request  loadRequest   : loadRequest(X)          &quot;Richiesta di carico dall&#x27;operatore&quot;
+Reply    loadEngaged   : loadEngaged(SLOT)       for loadRequest
+Reply    retryLater    : retryLater(X)           for loadRequest
+Reply    loadRejected  : loadRejected(X)         for loadRequest
+
+// --- CargoService -&gt; IOPort (Feedback Asincroni) ---
+Event    timeOut       : timeOut(X)              &quot;Scadenza regola dei 30 secondi&quot;
+Event    loadEnded     : loadEnded(X)            &quot;Fine procedura di carico&quot;
+Event    endOOS        : endOOS(X)               &quot;Fine stato Out Of Service&quot;
+Dispatch toggleLedBlink: toggleLedBlink(X)       &quot;Comando LED on|off&quot;
+
+// --- Sensor -&gt; CargoService (Eventi Proattivi di Business) ---
+Event    containerDetected : containerDetected(X) &quot;Emesso se D &lt; DFREE/2 per 3s&quot;
+Event    sensorAlarm       : sensorAlarm(X)       &quot;Emesso se D &gt; DFREE per 3s&quot;
+
+// --- Contesti ---
+Context ctxcargosystem    ip [host=&quot;localhost&quot; port=8020]
+Context ctxrobotservice26 ip [host=&quot;localhost&quot; port=8025]
+Context ctxsensor         ip [host=&quot;localhost&quot; port=8135]
+
+// Dichiarazione dell&#x27;entità esterna fornita dal committente
+ExternalQActor robotsmart26 context ctxrobotservice26
+
+
+QActor cargoservice context ctxcargosystem {
+    State s0 initial {
+        println(&quot;$name | starts - Inizializzazione Orchestratore&quot;) color green
+    }
+    Goto idle
+
+    State idle {
+        // Stato di attesa reattiva delle richieste (loadRequest) o eventi (sensorAlarm)
+    }
+}
+
+QActor ioport context ctxcargosystem {
+    State s0 initial {
+        println(&quot;$name | starts - Boundary Interfaccia Utente&quot;) color blue
+    }
+}
+
+QActor sensor context ctxsensor {
+    [# var DFREE #] 
+
+    State s0 initial {
+        println(&quot;$name | starts - Boundary Sensore&quot;) color cyan
+        // Il sensore applicherà logicamente le soglie DFREE per emettere eventi
+    }
+}</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8010-a9bc-fcd61d83f57e" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8020-8fc8-ef5d8190c967" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span>
+
+
+<h1 class="page-title" dir="auto">Problem analysis</h1>
+
+<article id="3884730f-99ce-8071-b242-d78cb52fffa0" class="page sans"><header><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><p id="3884730f-99ce-8044-8829-e439e2dc3863" class="">
+</p></div><div style="display:contents" dir="auto"></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80db-9726-cab71e4ffe12" class="">Nel sistema proposto i (micro)servizi non verranno usati solo come modello formale e computazionale, ma anche come elemento organizzativo del software prodotto, permettendo scalabilità, manutenibilità e flessiblità tecnologica.</p></div><div style="display:contents" dir="auto"><h3 id="3894730f-99ce-804b-bda8-e6ec7fe659d3" class="">Componenti forniti dal committente</h3></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8071-bfb7-e2db66b557fd" class="">Ci si chiede se il servizio robotsmart26 fornito dal committente sia sufficiente al fine di portare a termine i compiti richiesti dal sistema. Questo servizio ha la responsabilità di spostare il DDR in una posizione specificata. Attraverso una sequenza di messaggi move(M) e il linguaggio aril, cargoservice può comandare la sequenza di mosse con cui è possibile spostare il robot dalla IOPort allo Slot5 ed infine allo slot assegnato. Tuttavia questa pianificazione di mosse che servono per arrivare alla destinazione desiderata non deve essere responsabilità di cargoservice, il quale deve solo comandare affinchè il ddr si sposti nella regione target. </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8091-824e-cdc54d69815e" class="">In fase di analisi è stata introdotta la mappa della hold come griglia di interi. Il concetto di posizione viene formalizato con una coppia di coordinate cartesiane che identifica una cella della matrice. Da questa visione è possbile generare una mappa logica della Hold che vede le posizioni occupate da ostacoli con il valore 1 mentre le posizioni libere con il valore 0. Un esempio potrebbe essere:</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-806e-b793-e55fcfd174f7" class="">|r, 0, 0, 0, 0, 0<br/>|0, 1, 0, 1, 0, 0<br/>|0, 0, 0, 0, 1, 0<br/>|0, 1, 0, 1, 0, 0<br/>|0, 0, 0, 0, 0, 0<br/>|0, 0, 0, 0, 0, 0</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-807a-8db7-c56a352bb5f9" class="">Dove r è la cella occupata dal robot, mentre gli 1 rappresentano le posizioni dello slot. Grazie a questo servizio pertanto il robot non si muove alla cieca; deve muoversi all&#x27;interno di una mappa<br/>topografica definita, riconoscendo le coordinate, le pareti e gli ostacoli dell&#x27;ambiente circostante</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8024-a850-c60c77d4eae6" class="">RobotSmart26 fornisce la possibilità di ottenere una mappa come matrice int[ ][ ] partendo da una stringa memorizzata nel file dato del tipo:</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3894730f-99ce-800b-9f75-dad044a94005" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">0000001@0011001@0000101@0011001@0000001@1111111</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80b8-8755-d4aa8074c6af" class="">Robotsmart26 pertanto mantiene una mappa interna. Ci si chiede in questa fase se Cargoservice deve fornirla o se è già precaricata. In questa prima fase potrebbe essere semplicemente precaricata e fissa, impostando ostacoli e parti libere in modo fisso e a priori. Tuttavia si prevede in uno sviluppo successivo che sia il robot stesso a esplorare la stanza creandosi la mappa. Ci può essere un&#x27;applicazione chiamata Room Explorer che comincia a esplorare in maniera sistematica la stanza all’avvio del sistema: dove è libera scriverà 0, dove è occupata scriverà 1. Il<br/>risultato prodotto è la stringa riportata sopra, considerando gli ostacoli come fissi. </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80df-b292-c651d96faf72" class="">Una volta formalizzata la mappa mentale, ci si chiede chi esegue la pianificazione delle mosse da fare per raggiungere lo slot assegnato. Anche in questo caso robotsmart26 espone un (nano)servizio detto planexec, in grado di eseguire una pianificazione automatica: lo scopo di planexec è eseguire una sequenza di mosse (un piano), data una destinazione finale e attraverso un’insieme di mosse base. L’interfaccia di messaggi fornita dal committente per poter interagire con questo servizio è la seguente:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-801b-8aa4-d87a316cbe4c" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Request doplan : doplan( PLAN, STEPTIME ) &quot;execute PLAN with STEPTIME&quot;
+Reply doplandone : doplandone( ARG ) for doplan
+Reply doplanfailed : doplanfailed( PLANTODO ) for doplan
+Dispatch nextmove : nextmove(M) &quot;autodispatch&quot;
+Dispatch nomoremove : nomoremove(M) &quot;autodispatch&quot;
+Event alarm : alarm(X) &quot;event at application level&quot;</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8045-881a-c84910d6dc9e" class="">Questo servizio deve essere usato da cargoservice per la gestione del movimento del robot nella Hold, come verrà analizzato nello specifico con gli sprint successivi.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8085-93f2-dd8813b0e438" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="3894730f-99ce-8047-be08-f76d117af4c8" class="">Hold e Slot</h3></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80c1-ac80-c6de70069b58" class="">I requisiti definiscono la stiva (hold) come una griglia discreta di coordinate e gli Slot come sotto-spazi con uno stato binario (libero o occupato).</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-803b-bfd0-e38eb6442118" class="">Come specificato precedentemente RobotSmart si aspetta una stringa composta nel segente modo “0/1/X/@”, pertanto al sistema verrà passata una stringa siffatta e questa verrà pertanto tradotta in una matrice del tipo: int[][] grid</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8060-a93f-ea27f3c780ad" class="">Si decidono di formalizzare ulteriormente le caratteristiche desiderate da Hold attraverso un approccio Object-Oriented, modellando le due entità come classi (POJO) che incapsulano la logica spaziale. Ogni Coord rappresenta una cella quadrata di una unità robotoca, cui dimensione in metri corrisponde ad un’area in cui è inscrivibile il robot stesso. Ad ogni Slot in quanto esistene nella Hold, è associata Coord all’interno della griglia. Allo stesso modo anche IOPort e Slot5 hanno le relative.</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js" integrity="sha512-xKcnbsdT0KMoA4yrozkqZM1XJVTrPsjdQwvigxlAlxEDu8YDvC/jl+LfVqn0fY3Vs6m2y4a89JCHEIA/Z9zpmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3894730f-99ce-80f9-a20e-e8243c815258" class="code code-wrap"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public class Slot {
+	private String name;
+	private boolean occupato = false;
+	private Integer pid = null;      //pid del container assegnato (barcode)
+}
+
+public class Hold {
+		private int D;        //dimensione unità robotica in metri
+    private int width;    // larghezza hold (in unità robotiche)
+    private int length;   // lunghezza hold (in unità robotiche)
+    private int[][] grid;         // griglia logica per la mappa mentale
+    
+    private Map&lt;Coord, Slot&gt; gridSlots = new HashMap&lt;&gt;();
+    
+    private Coord ioport;
+    private Coord slot5;
+
+    public static class Coord {
+        private final int x;
+        private final int y;
+
+        public Coord(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() { return x; }
+        public int getY() { return y; }
+    }
+}</code></pre></div><div style="display:contents" dir="auto"><h3 id="3894730f-99ce-8021-8772-c53b75f55d6f" class="">IOPort</h3></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80bb-9566-dd0d742ffb9e" class="">Per risolvere il problema del disaccoppiamento tecnologico del frontend, si decide in questa fase di modellare l’entità IOPort come un (micro)servizio, co<mark class="highlight-default">n cui è possibile comunicare mediante scambio di messaggi. Infatti, per evitare di rendere la logica applicativa del core business troppo dipendente dalla realizzazione tecnologica dell’IOPort come WebGUI,  viene formalizzata come un </mark><mark class="highlight-default"><strong>QActor</strong></mark><mark class="highlight-default">.</mark></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8094-989b-e3c043733c38" class="">Questa scelta ingegneristica di sviluppo incrementale permette di:</p></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-8086-b4b2-d8d7f4a26422" class="numbered-list" start="1"><li>Astrarre il frontend.</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-80a8-813c-d1f95a30cf82" class="numbered-list" start="2"><li>Validare l’orchestratore in isolamento.</li></ol></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8010-97d9-c4ee50539fd3" class="">La WebGUI è erogata tramite server separato, attuando quindi una distinzione tra IOPort, ossia la macchina a stati, e guiserver, che eroga la pagina HTML che gestisce le connessioni con i vari utenti del sito. </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8071-8c64-f575cdd08066" class="">Per la comunicazione tra WebGUI e IOPort si è scelto di utilizzare il protocollo Websocket, in quanto permette di ricevere dati non appena sono pronti senza sovraccaricare il sistema. Questa scelta è necessaria in quanto cargoservice può emettere eventi in modo proattivo (e.g. <code>timeout</code>, <code>loadEnded</code> o <code>sensorAlarm</code>) che devono aggiornare lo stato del sistema (e quindi la GUI stessa) in tempo reale.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8041-aff0-eae374efafe7" class="">Una volta che cargoservice ha inviato messaggi al modello QAK di IOPort, i messaggi scambiati tramite WebSocket tra IOPort e WebGUI sono definiti con la seguente sintassi JSON:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-80db-aa6a-d69ecb2f7f0b" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">{ &quot;type&quot;: TYPE, &quot;payload&quot;: PAYLOAD }
+
+TYPE    ::= updateState | toggleLedBlink
+PAYLOAD ::= stateInfo | ledInfo
+
+stateInfo ::= { &quot;state&quot;: STATE, &quot;message&quot;: MSG }
+STATE     ::= disengaged | engaged | outofservice
+MSG       ::= string
+
+ledInfo   ::= { &quot;active&quot;: ACTIVE }
+ACTIVE    ::= true | false</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80e4-a6bb-c24c8130016f" class="">Viceversa, i messaggi tra WebGUI e IOPort (ossia il solo comando del bottone premuto), sono definiti come segue:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-800f-be81-c985655f888b" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">{ &quot;type&quot;: &quot;buttonPressed&quot; }</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8095-aec5-eb9200bddf3b" class="">Questo messaggio arriva al guiserver via WebSocket. Il guiserver deve trasformarlo in un messaggio QAK e inviarlo al QActor ioport. Questo può portare a definire un <code>dispatch buttonPressed</code> , che una volta rilevato da IOPort, viene girato come una Request a CargoService che provvederà a verificare la disponibilità di Slot, eventalmente aggiornando poi in base alla risposta lo stato presentato sul Display della Web GUI.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80ad-85d2-dc98f964fe45" class="">La precedente trattazione suggerisce un ulteriore possibile un test funzionale, al fine di validare il comportamento di cargoservice e IOPort <strong>in isolamento</strong>, senza browser né GUI, simulando il pushbutton tramite una richiesta HTTP diretta al guiserver.  </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-809a-9f75-d378db06950d" class="">Precondizione:</p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80b8-880a-ddb516a5974b" class="bulleted-list"><li style="list-style-type:disc">cargoservice in stato idle</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-800d-b877-dde6b4fe3658" class="bulleted-list"><li style="list-style-type:disc">almeno uno slot libero nella Hold</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-801d-bc30-dc727069d7ea" class="bulleted-list"><li style="list-style-type:disc">guiserver attivo su <code>localhost:8040</code></li></ul></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8054-b859-d4e8a13f5d46" class="">I comandi sono inviati, al momento, usando il tool curl:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-8077-98a4-e99d7c79249b" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">curl -X POST http://localhost:8040/api/button \
+     -H &quot;Content-Type: application/json&quot; \
+     -d &#x27;{&quot;type&quot;: &quot;buttonPressed&quot;}&#x27;</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8022-9e84-f8a9f4f7f2d6" class=""><strong>Sequenza attesa osservabile:</strong></p></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-80d4-a4bf-f763f6a4b7d7" class="numbered-list" start="1"><li>guiserver riceve la richiesta HTTP e la traduce in <code>dispatch buttonPressed</code> verso il QActor ioport</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-8005-ad49-c2762e6145d2" class="numbered-list" start="2"><li>ioport invia <code>loadRequest(X)</code> a cargoservice</li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-80fe-86a5-cc3aaf013d5b" class="numbered-list" start="3"><li>cargoservice risponde con <code>loadEngaged(SLOT)</code></li></ol></div><div style="display:contents" dir="auto"><ol type="1" id="3894730f-99ce-802e-8f40-e0d2da8bf4bf" class="numbered-list" start="4"><li>ioport riceve <code>loadEngaged(SLOT)</code> e invia via WebSocket al browser (verificabile con un client WebSocket di test, es. <code>wscat</code>):</li></ol></div><div style="display:contents" dir="auto"><h3 id="3894730f-99ce-8058-a86a-c022e4bc0570" class=""><strong>Sensor</strong></h3></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80d9-9c58-ef27f10814b1" class="">In accordo con quanto detto fino ad ora, il sensore fisico che rileva la distanza degli oggetti rilevati, risulta un nodo a se stante, come potrebbe essere un dispositivo PicoW con un Sonar che misura la distanza fisica dagli oggetti. Il QActor <code>sensor</code>, in esecuzione su <code>ctxsensor</code>, costituisce il <strong>boundary</strong> tra il nodo fisico e il sistema applicativo: riceve le misurazioni grezze, applica le regole di business definite nei requisiti e propaga eventi logici verso cargoservice. Il protocollo di interazione con il sensore fisico non viene specificato in questa fase, per non essere vincolati a scelte teconologiche vincolanti, tuttavia sembra opportuno citare come alternative valide TCP e MQTT. </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8000-b2c9-f07cfcdbc5c3" class="">Formalizziamo anche in questo caso tramite stringhe JSON i messaggi che emette un ipotetico sonar nella misurazione delle distanze:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-806e-9556-d9362b7e3788" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">{&quot;sensorName&quot;: &quot;&lt;sensorName&gt;&quot;, &quot;distance&quot;: &lt;int&gt; }</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8078-9747-e881e27d8085" class="">Il QActor Sensor, che conosce la distanza DFREE, una volta ricevuto un messaggio con il payload descritto, dovrà verificare tutte le condizioni specificate nei requisiti, producendo i seguenti event, definiti anche da CargoService:</p></div><div style="display:contents" dir="auto"><pre id="3894730f-99ce-8080-aafb-f1da4aa0f12d" class="code code-wrap"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Event    containerDetected : containerDetected(X) &quot;Emesso se D &lt; DFREE/2 per 3s&quot;
+Event    sensorAlarm       : sensorAlarm(X)       &quot;Emesso se D &gt; DFREE per 3s&quot;</code></pre></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-802d-aa1e-ffdd897a0d1b" class="">Si nota che il QActor sensor non è un semplice forwarder di messaggi, ma mantiene l&#x27;ultimo valore misurato e un timer di stabilità. Un singolo campione fuori soglia non è sufficiente a scatenare l&#x27;evento, ma la condizione deve persistere per la durata richiesta. </p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8004-8f48-e6bfcc2579f7" class="">CargoService a sua volta userà queste informazioni per aggiornare lo stato del sistema, per gestire il movimento del ddr o per aggiornare la Web GUI.</p></div><div style="display:contents" dir="auto"><h3 id="3894730f-99ce-8035-b22e-d5187691545d" class="">Piano di lavoro e definizione degli sprint</h3></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8065-9689-d784e1d46f1d" class="">Goal dello Sprint 1:</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-804d-8de8-e5f7850bc4a1" class="">Si vuole realizzare il servizio cargoservice, in modo che gestisca correttamente lo stato della Hold e il dialogo con l&#x27;utente tramite IOPort (WebGui). In questa fase non viene ancora mosso fisicamente il robot ancora</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80e1-aad7-f1244ac958aa" class="">Comprende:</p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8005-a678-f4edf39d6ef9" class="bulleted-list"><li style="list-style-type:disc">cargoservice riceve loadRequest da IOPort</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-803d-91f0-ee045d5a65d3" class="bulleted-list"><li style="list-style-type:disc">cargoservice valuta lo stato della Hold e risponde con <code>loadEngaged(SLOT)</code>, <code>loadRejected</code>, o <code>retryLater</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80f7-9f3d-c1cc6c520c62" class="bulleted-list"><li style="list-style-type:disc">IOPort (WebGui) mostra sul display la risposta ricevuta</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8095-a344-eb5f3b201e49" class="bulleted-list"><li style="list-style-type:disc">il LED inizia a lampeggiare quando il sistema è engaged</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-805b-8bb1-f86e5f25671a" class="bulleted-list"><li style="list-style-type:disc">cargoservice gestisce lo stato engaged/disengaged/pieno correttamente</li></ul></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80e5-b633-ca1db310cdd6" class="">Viene omessa la gestione del sensore, timer di 30s, movimento reale del robot.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-807d-9ac4-f417eeaf55fa" class="">Un primo piano ci vede convergere in 2 ulteriori sprint ossia:</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8085-b84a-c54735a6d480" class="">Sprint2: integrare cargoservice con robotsmart26 per eseguire la sequenza di movimento reale IOPort → Slot5 → SlotRiservato, simulando l&#x27;arrivo del container con un trigger manuale (senza sensore fisico). Gestione del percorso da fare e del movimento del robot.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80ab-b794-c37c586b1e90" class="">Sprint3: integrare il sensore (sonar su PicoW) nel sistema, abilitando il rilevamento reale del container e la gestione del timer dei 30 secondi. Verranno considerati in questa fase i guasti del sonar e le situazioni anomale.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8029-b4fe-c2de1db718c2" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span>
+
+<h1 class="page-title" dir="auto">Project</h1> 
+ 
+
+<h1 class="page-title" dir="auto">Testing</h1> 
+ <article id="3884730f-99ce-8055-934f-fbfc666e23c7" class="page sans"><header><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><h2 id="3884730f-99ce-80b4-8f4e-c6d625a21e87" class="">User Stories</h2></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80b7-b476-eb55272ae25e" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio poter premere il pulsante dell’IOPort se il sistema è libero per richiedere il carico di un container, e sapere in quale slot riservato va depositato.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80aa-a33e-cfe027a5bee6" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio sapere se la stiva di carico è piena al fine di non dover premere il pulsante ed aspettare una risposta</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8049-accb-de63981ba308" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio sapere se il sistema è temporaneamente impegnato in un’altra operazione di carico, in modo da sapere se riprovare più tardi.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-809c-bf14-e33abcdb0c74" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio vedere in ogni istante sul display lo stato attuale del sistema</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80b0-8f42-ed2d34d72be8" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio vedere un led lampeggiare quando il sistema è <em>engaged.</em></li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8070-b398-ebc9f5f6d737" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, mi aspetto un rifiuto immediato sul display se premo il pulsante mentre il sistema è engaged.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80be-b247-fb891c58ffab" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, se non carico entro 30s il container nell’area del sensore, voglio poter essere avvisato che la richiesta è stata annullata ed il sistema è tornato disengaded.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80d5-bbbb-c9f840ce2879" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio essere avvisato al termine della procedura di caricamento del container.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8071-acba-fec9e91d5425" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Cliente</strong>, voglio sapere se il sistema è fuori servizio, per evitare di fare richieste inutili.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-801d-870a-f3a81e5f2364" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Sistema</strong>, voglio rilevare automaticamente la presenza di container nell’area del sensore tramite quest’ultimo, in modo da poter avviare la sequenza per lo spostamento del container</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8015-bd94-e84c8c9864ef" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Sistema</strong>, voglio far stazionare il container nello slot 5 per il tempo necessario al barcode senza dover intraprendere ulteriori azioni.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80aa-b881-dec469f58b58" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Sistema</strong>, voglio sapere quando il sonar smette di funzionare correttaente in modo da poter entrare nello stato di fuori servizio</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-805e-8db1-eb7b3e6045b8" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Sistema</strong>, analogamente voglio sapere quando il sonar riprende a funzionare, dopo un Out Of Service.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-8037-808a-f4f9e2820cc9" class="bulleted-list"><li style="list-style-type:disc"> Come <strong>Sistema</strong>, voglio monitorare il tempo che il cliente impiega a spostare il container nell’area del sensore.</li></ul></div><div style="display:contents" dir="auto"><ul id="3884730f-99ce-80f2-8059-ff664b51f7c4" class="bulleted-list"><li style="list-style-type:disc">Come <strong>Sistema</strong>, voglio monitorare il tempo che il container trascorre nell’area del sonar</li></ul></div><div style="display:contents" dir="auto"><p id="3884730f-99ce-8054-b27c-c36623fef226" class="">
+</p></div><div style="display:contents" dir="auto"><h2 id="3884730f-99ce-80c3-b31f-e389c4749b5e" class="">Test</h2></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80ed-92de-c4b09f9d143a" class="">In base all’interazione con l’utente richiesta dai requisiti, si definiscono i seguenti test funzionali:</p></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-808b-9943-ca21e444e3cf" class="">TF1 - Richiesta accettata</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8021-ac96-c0f121ade30b" class=""><strong>Precondizione:</strong> sistema in stato <code>disengaged</code>, con almeno uno slot libero.</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8028-b059-d017210cd0cf" class=""><strong>Input:</strong> IOPort invia <code>loadRequest(X)</code> a cargoservice</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8000-be46-fad8d0bcb667" class=""><strong>Risultato atteso:</strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80de-b5b3-d33ac0200108" class="bulleted-list"><li style="list-style-type:disc"><code>loadEngaged(SLOT)</code>, con slot <code>SLOT</code> riservato per il container </li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-803d-9519-dda27c2bd5a5" class="bulleted-list"><li style="list-style-type:disc">sistema in stato <code>engaged</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-808d-bcf6-ecd228d5f7da" class="bulleted-list"><li style="list-style-type:disc">led lampeggiante</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80d8-a6f3-f26b23742e24" class="bulleted-list"><li style="list-style-type:disc">display mostra <code>SLOT</code> assegnato</li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-8010-b0fd-d6ade5de5654" class="">TF2 - Richiesta rifiutata - hold piena</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80dd-a139-c957caa4d0a1" class=""><strong>Precondizione:</strong> sistema <code>disengaged</code>, slot tutti occupati</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8059-bd8b-f4ae1f70a3f2" class=""><strong>Input:</strong> IOPort invia <code>loadRequest(X)</code> a cargoservice</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80c5-a706-f95d125579b9" class=""><strong>Risultato atteso:</strong> </p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80c9-9647-eda52ebd4a88" class="bulleted-list"><li style="list-style-type:disc">sistema in stato <code>disengaged</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8023-916f-d618aebd2490" class="bulleted-list"><li style="list-style-type:disc"><code>loadRejected(X)</code></li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-801d-a39a-fee96fa23295" class="">TF3 - Richiesta rifiutata - sistema già engaged</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80ab-90e9-c703333f9cb2" class=""><strong>Precondizione: </strong>sistema <code>engaged</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8004-9fdf-d2c77864f265" class=""><strong>Input:</strong> IOPort invia <code>loadRequest(X)</code> a cargoservice</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8047-b936-fa55059a2d9b" class=""><strong>RIsultato atteso: </strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8062-8fa5-fbc5aba8908e" class="bulleted-list"><li style="list-style-type:disc"><code>retryLater(X)</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80dc-857c-f02afc515fee" class="bulleted-list"><li style="list-style-type:disc">sistema rimane in stato <code>engaged</code></li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-807e-96f0-eff979d9cd76" class="">TF4 - Timeout dopo 30 secondi</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80f0-beb3-ce2ce55d98d5" class=""><strong>Precondizione: </strong>sistema entrato nello stato <code>engaged</code>, timer avviato</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80a5-92b1-ee87797cc544" class=""><strong>Input: </strong>dopo 30 secondi, se non viene ricevuto <code>containerDetected</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8018-af7d-e9d4e89e8cd4" class=""><strong>Risultato atteso:</strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8032-8ae5-c75a06d46080" class="bulleted-list"><li style="list-style-type:disc"><code>timeOut</code> emesso verso IOPort</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8083-a9a9-d882471c678c" class="bulleted-list"><li style="list-style-type:disc">led spento</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80c7-9783-f64f19f946b3" class="bulleted-list"><li style="list-style-type:disc">sistema entra nello stato <code>disengaged</code></li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-80b9-9804-ed97930f227d" class="">TF5 - Container rilevato e depositato</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-809b-8ec5-dac0f9005600" class=""><strong>Precondizione: </strong>sistema <code>engaged</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8015-ba62-e09bf5d44e52" class=""><strong>Input: </strong><code>containerDetected(X)</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80c3-aade-d572f9dbd5dd" class=""><strong>Risultato atteso: </strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8007-a8d4-f53cb31cb8a8" class="bulleted-list"><li style="list-style-type:disc">il DDR si muove verso slot5, poi verso lo slot assegnato</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80e5-8833-f1952faf03f2" class="bulleted-list"><li style="list-style-type:disc"><code>loadEnded</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80d0-825f-e3b4ad925883" class="bulleted-list"><li style="list-style-type:disc">led spento</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8085-9ef0-e715d37f0777" class="bulleted-list"><li style="list-style-type:disc">sistema <code>disengaged</code></li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-80e8-9050-c7364b93e5a0" class="">TF6 - Allarme sonar</h4></div><div style="display:contents" dir="auto"><p id="3a064ee6-daf7-4999-992d-56480aeee2c4" class=""><strong>Precondizione: </strong>stato <code>engaged</code>oppure <code>disengaged</code></p></div><div style="display:contents" dir="auto"><p id="477e64c3-9d06-455e-9495-683e2ce418cc" class=""><strong>Input:</strong><code>sensorAlarm(X)</code></p></div><div style="display:contents" dir="auto"><p id="092d8124-85d8-47ad-8699-c8d0d0fedea7" class=""><strong>Risultato atteso:</strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80c2-85d9-f5f9d3c76e22" class="bulleted-list"><li style="list-style-type:disc">sistema entra nello stato di <code>outofservice</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8046-b98c-e67208dbc362" class="bulleted-list"><li style="list-style-type:disc">aggiornamento display</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-804a-9e23-fc1065627a1b" class="bulleted-list"><li style="list-style-type:disc">led spento</li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-80e2-a372-fd93dedf5a2c" class="">TF7 - Fine Out of Service</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80a4-a6be-fffb956ca863" class=""><strong>Precondizione: </strong>sistema nello stato di <code>outofservice</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80f4-ab2e-ff803704f08d" class=""><strong>Input:</strong><code>endOOS(X)</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-80a2-9369-daed71292441" class=""><strong>Risultato atteso:</strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80b1-812d-f3d8d0097ebc" class="bulleted-list"><li style="list-style-type:disc">sistema entra nello stato <code>disengaged</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-8068-9556-c49a1ef744f0" class="bulleted-list"><li style="list-style-type:disc">aggiornamento display</li></ul></div><div style="display:contents" dir="auto"><h4 id="3894730f-99ce-80cb-abc6-e2f4c3458337" class="">TF8 - Pressione pulsante durante engaged</h4></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-808d-a0a6-dc98b3426bef" class=""><strong>Precondizione: </strong>sistema <code>engaged</code></p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8079-954e-c70b57077086" class=""><strong>Input: </strong>pressione pulsante della WebGUI</p></div><div style="display:contents" dir="auto"><p id="3894730f-99ce-8082-ae2f-fb6c43d2e44f" class=""><strong>Risultato atteso:</strong></p></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80f3-800d-fcc1ba318d44" class="bulleted-list"><li style="list-style-type:disc">nessun messaggio inviato</li></ul></div><div style="display:contents" dir="auto"><ul id="3894730f-99ce-80fd-ab48-fa510f310d44" class="bulleted-list"><li style="list-style-type:disc">aggiornamento display</li></ul></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span>
+
+<h1 class="page-title" dir="auto">Deployment</h1> 
+
+ 
+<h1 class="page-title" dir="auto">Maintenance</h1> 
+
+</body></html>
