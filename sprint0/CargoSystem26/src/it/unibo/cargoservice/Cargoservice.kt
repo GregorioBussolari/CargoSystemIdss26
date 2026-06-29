@@ -29,10 +29,13 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
+		
+				var num_empty_slot = 4		//caso simulato in cui la hold sia libera
+				var engaged = false
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | starts - Inizializzazione Orchestratore")
+						CommUtils.outgreen("$name | starts - Inizializzazione Orchestratore Cargo Service")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -42,6 +45,31 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("idle") { //this:State
 					action { //it:State
+						CommUtils.outgreen("$name | stato disingaged, attendo request")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t00",targetState="handleLoadRequest",cond=whenRequest("loadRequest"))
+				}	 
+				state("handleLoadRequest") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						if(  num_empty_slot > 0 && engaged == false  
+						 ){answer("loadRequest", "loadEngaged", "loadEngaged(1)"   )  
+						
+								     	num_empty_slot --
+								     	engaged = true
+						CommUtils.outmagenta("$name | Request di carico accettata stato enaged")
+						}
+						if(  num_empty_slot == 0 && engaged == false   
+						 ){answer("loadRequest", "loadRejected", "loadRejected(0)"   )  
+						}
+						if(  engaged == true   
+						 ){answer("loadRequest", "retryLater", "retryLater(0)"   )  
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

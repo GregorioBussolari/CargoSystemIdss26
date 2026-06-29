@@ -29,11 +29,10 @@ class Sensor ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		 var DFREE  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outcyan("$name | starts - Boundary Sensore")
+						CommUtils.outcyan("$name | starts - Sensore")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

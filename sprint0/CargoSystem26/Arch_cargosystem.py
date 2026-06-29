@@ -32,4 +32,5 @@ with Diagram('cargosystemArch', show=False, outformat='png', graph_attr=graphatt
           robotsmart26=Custom('robotsmart26(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxsensor', graph_attr=nodeattr):
           sensor=Custom('sensor','./qakicons/symActorWithobjSmall.png')
+     ioport >> Edge(color='magenta', style='solid', decorate='true', label='<loadRequest<font color="darkgreen"> loadEngaged retryLater loadRejected</font> &nbsp; >',  fontcolor='magenta') >> cargoservice
 diag

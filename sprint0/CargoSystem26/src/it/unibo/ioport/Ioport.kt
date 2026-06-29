@@ -29,10 +29,63 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
+		var num = 0  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name | starts - Boundary Interfaccia Utente")
+						CommUtils.outblue("$name | starts - Interfaccia Utente")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="running", cond=doswitch() )
+				}	 
+				state("running") { //this:State
+					action { //it:State
+						CommUtils.outgreen("$name | Richiesta di carico arrivata, request verso cargoservice")
+						delay(200) 
+						request("loadRequest", "loadRequest(num)" ,"cargoservice" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t01",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t02",targetState="hadleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t03",targetState="handleRetry",cond=whenReply("retryLater"))
+				}	 
+				state("handleEngaged") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						if( checkMsgContent( Term.createTerm("loadEngaged(SLOT)"), Term.createTerm("loadEngaged(SLOT)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 var slot  = payloadArg(0).toInt()  
+								CommUtils.outgreen("$name | Carico Accettato, slot assegnato $slot")
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("hadleReject") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						CommUtils.outred("$name | Carico NON Accettato, tutti gli slot sono occupati")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+				}	 
+				state("handleRetry") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						CommUtils.outred("$name | Carico NON Accettato, IOPort correntemente occupata, riprova più tardi")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
