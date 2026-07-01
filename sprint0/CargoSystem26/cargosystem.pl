@@ -9,8 +9,7 @@ reply( loadRejected, loadRejected(X) ).  %%for loadRequest
 context(ctxcargosystem, "localhost",  "TCP", "8020").
 context(ctxrobotservice26, "localhost",  "TCP", "8025").
 context(ctxsensor, "localhost",  "TCP", "8135").
- qactor( robotsmart26, ctxrobotservice26, "external").
-  qactor( cargoservice, ctxcargosystem, "it.unibo.cargoservice.Cargoservice").
+ qactor( cargoservice, ctxcargosystem, "it.unibo.cargoservice.Cargoservice").
  static(cargoservice).
   qactor( ioport, ctxcargosystem, "it.unibo.ioport.Ioport").
  static(ioport).
