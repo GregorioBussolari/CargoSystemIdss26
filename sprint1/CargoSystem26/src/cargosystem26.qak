@@ -1,0 +1,14 @@
+System cargosystem
+
+// --- IOPort <-> CargoService ---
+Request  loadRequest   : loadRequest(X)          "Richiesta di carico dall'operatore"
+Reply    loadEngaged   : loadEngaged(SLOT)       for loadRequest
+Reply    retryLater    : retryLater(X)           for loadRequest
+Reply    loadRejected  : loadRejected(X)         for loadRequest
+
+
+// --- Contesti ---
+Context ctxcargosystem    ip [host="localhost" port=8020]
+Context ctxrobotservice26 ip [host="localhost" port=8025]
+Context ctxsensor         ip [host="localhost" port=8135]
+
