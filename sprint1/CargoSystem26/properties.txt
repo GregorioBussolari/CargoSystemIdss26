@@ -1,0 +1,14 @@
+# Dimensioni generali della Hold
+hold.width=10
+hold.length=10
+hold.D=1
+
+# Coordinate di accesso e scarico reali (X,Y)
+coord.ioport=5,5
+coord.slot5=2,2
+
+# Posizioni di attracco/scarico per gli slot da 1 a 4
+coord.slot1=0,0
+coord.slot2=0,1
+coord.slot3=1,0
+coord.slot4=1,1

@@ -19,7 +19,7 @@ public class TestHold {
     @Before
     public void setUp() {
         // Inizializziamo la Hold reale
-        hold = new Hold(10, 10);
+        hold = new Hold(10, 10,1);
 
         // Definiamo le coordinate reali usando Hold.Coord
         c1 = new Coord(0, 0);

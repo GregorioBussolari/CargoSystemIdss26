@@ -1,8 +1,14 @@
 package domain;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+
+import cli.System.IO.IOException;
 
 public class Hold implements IHold{
 	private int D;        //dimensione unità robotica in metri
@@ -42,9 +48,10 @@ public static class Coord {
 }
 
 // Costruttore di base
-	public Hold(int width, int length) {
+	public Hold(int width, int length, int D) {
 	    this.width = width;
 	    this.length = length;
+	    this.D = D;
 	}
 	
 	public void addSlot(Coord coord, Slot slot) {
@@ -114,5 +121,61 @@ public static class Coord {
 	    }
 	    return null; // Ritorna null se non trovato
 	}
+
+	
+	
+	public static Hold fromConfigFile(String filePath) throws IOException, FileNotFoundException, java.io.IOException {
+	    Properties prop = new Properties();
+	    
+	    // Leggiamo il file di configurazione
+	    try (InputStream input = new FileInputStream(filePath)) {
+	        prop.load(input);
+	    }
+
+	    // 1. Leggiamo i dati strutturali della griglia
+	    int width = Integer.parseInt(prop.getProperty("hold.width", "10"));
+	    int length = Integer.parseInt(prop.getProperty("hold.length", "10"));
+	    int d = Integer.parseInt(prop.getProperty("hold.D", "1"));
+
+	    // Creiamo l'istanza reale di Hold
+	    Hold hold = new Hold(width, length, d);
+
+	    // 2. Leggiamo e configuriamo le coordinate fisse di sistema
+	    hold.ioport = parseCoord(prop.getProperty("coord.ioport"));
+	    hold.slot5 = parseCoord(prop.getProperty("coord.slot5"));
+
+	    if (hold.ioport == null || hold.slot5 == null) {
+	        throw new IllegalArgumentException("Errore di configurazione: 'coord.ioport' e 'coord.slot5' sono obbligatori.");
+	    }
+
+	    // 3. Inizializziamo e mappiamo gli Slot dinamici standard da 1 a 4
+	    for (int i = 1; i <= 4; i++) {
+	        String coordStr = prop.getProperty("coord.slot" + i);
+	        if (coordStr != null) {
+	            Coord slotCoord = parseCoord(coordStr);
+	            // Inseriamo lo slot direttamente nella mappa gridSlots dell'istanza appena creata
+	            hold.gridSlots.put(slotCoord, new Slot("Slot" + i));
+	        }
+	    }
+	    
+	    // Inseriamo anche lo slot5 speciale nella mappa per coerenza di calcolo
+	    hold.gridSlots.put(hold.slot5, new Slot("Slot5"));
+
+	    return hold;
+	}
+
+	/**
+	 * Helper interno per convertire una stringa del tipo "x,y" in un oggetto Coord.
+	 */
+	private static Coord parseCoord(String rawValue) {
+	    if (rawValue == null || rawValue.trim().isEmpty()) {
+	        return null;
+	    }
+	    String[] parts = rawValue.split(",");
+	    int x = Integer.parseInt(parts[0].trim());
+	    int y = Integer.parseInt(parts[1].trim());
+	    return new Coord(x, y);
+	}
+
 
 }
