@@ -153,7 +153,7 @@ QActor cargoservice context ctxcargosystem
 	
 	State handleDepositFailed{
 		// TODO : deposito fallito 
-		// boh va in out of service? PEnso sia da scrivere in "PROJECT"
+		// boh va in idle? non ne sono sicuro
 	}
 	Goto idle
 	
