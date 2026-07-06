@@ -30,6 +30,7 @@ with Diagram('cargosystemArch', show=False, outformat='png', graph_attr=graphatt
           ioport=Custom('ioport','./qakicons/symActorWithobjSmall.png')
           sensor=Custom('sensor','./qakicons/symActorWithobjSmall.png')
      sys >> Edge( label='containerDetected', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
+     sys >> Edge( label='sensorAlarm', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
      cargoservice >> Edge( label='timeOut', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='endOOS', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
      ioport >> Edge(color='magenta', style='solid', decorate='true', label='<loadRequest<font color="darkgreen"> loadEngaged retryLater loadRejected</font> &nbsp; >',  fontcolor='magenta') >> cargoservice

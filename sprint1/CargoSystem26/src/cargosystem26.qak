@@ -31,6 +31,14 @@ Event    sensorAlarm       : sensorAlarm(X)         "Emesso se D > DFREE per 3s"
 Dispatch startBlink       : startBlink(X)           "Gestione accensione blink LED"
 Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink LED"
 
+// --- Gestione RobotSmart26 ---
+Request  doplan 		  : doplan( PLAN, STEPTIME ) "execute PLAN with STEPTIME"
+Reply 	 doplandone 	  : doplandone( ARG ) for doplan
+Reply 	 doplanfailed     : doplanfailed( PLANTODO ) for doplan
+Dispatch nextmove 		  : nextmove(M) "autodispatch"
+Dispatch nomoremove 	  : nomoremove(M) "autodispatch"
+Event    alarm 			  : alarm(X) "event at application level"
+
 // --- Contesti ---
 Context ctxcargosystem    ip [host="localhost" port=8020]
 //Context ctxrobotservice26 ip [host="localhost" port=8025]
@@ -90,7 +98,7 @@ QActor cargoservice context ctxcargosystem
 		//Altrimenti passa alla gestione del container detected
 		whenEvent containerDetected -> handleContainerDetected
 		//Allarme out of service
-		whenInterruptEvent sensorAlarm -> handleAlarm
+		whenEvent sensorAlarm -> handleAlarm
 	
 	State handleTimeoutExpired {
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red
@@ -107,8 +115,14 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [ENGAGED] Container rilevato ") color green
 		// TODO : meccanismo vs robotsmart26
 	}
-	Goto idle
+	Goto movingRobot
 	
+	State movingRobot{
+		println("$name | [ENGAGED] Robot muove container verso slot") color magenta
+	}
+	Transition t2
+		whenReply doplandone -> handleDepositSuccess
+		whenReply do
 	
 	//STATO OUT OF SERVICE
 	
@@ -126,8 +140,8 @@ QActor cargoservice context ctxcargosystem
 	
 	State handleEndOOS{
 		println("$name | [ENDING OOS] Riprendo da stato precedente") color green
-		returnFromInterrupt //Comando goat questo D:
 	}
+	Goto idle 
 }
 
 QActor ioport context ctxcargosystem {

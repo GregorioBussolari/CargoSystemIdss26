@@ -95,7 +95,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					}	 	 
 					 transition(edgeName="t11",targetState="handleTimeoutExpired",cond=whenTimeout("local_tout_"+name+"_waitingContainer"))   
 					transition(edgeName="t12",targetState="handleContainerDetected",cond=whenEvent("containerDetected"))
-					interrupthandle(edgeName="t13",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
+					transition(edgeName="t13",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("handleTimeoutExpired") { //this:State
 					action { //it:State
@@ -148,12 +148,12 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("handleEndOOS") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | [ENDING OOS] Riprendo da stato precedente")
-						returnFromInterrupt(interruptedStateTransitions)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
 				}	 
 			}
 		}
