@@ -138,6 +138,8 @@ QActor cargoservice context ctxcargosystem
 	State handleDepositSuccess{
 		
 		println("$name | [DISENGAGED] container depositato con successo") color green 
+		
+		//Stato disengaged
 		[# engaged = false #]
 		
 		//Spengo led 
