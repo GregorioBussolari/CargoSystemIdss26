@@ -63,10 +63,12 @@ QActor cargoservice context ctxcargosystem
 
     State idle {
         // Stato di attesa reattiva delle richieste (loadRequest) o eventi (sensorAlarm)
-        println("$name | stato disingaged, attendo request") color green
+        [# engaged = false #]
+        println("$name | [DISENGAGED] attendo request") color green
     }
     Transition t0
         whenRequest loadRequest -> handleLoadRequest
+        whenInterruptEvent sensorAlarm -> handleAlarm        
         
     State handleLoadRequest{
 	    printCurrentMessage color yellow
@@ -77,7 +79,11 @@ QActor cargoservice context ctxcargosystem
 	            num_empty_slot --
 	            engaged = true
 	        #]
-	        println("$name | Request di carico accettata, stato engaged") color magenta
+	        
+	        //Accensione led 
+	        forward led -m startBlink : startBlink(0)
+	        
+	        println("$name | [ENGAGED] Request di carico accettata") color magenta
 	    } else {
 	        if [# engaged == true #] {
 	            replyTo loadRequest with retryLater : retryLater(0)
@@ -98,7 +104,7 @@ QActor cargoservice context ctxcargosystem
 		//Altrimenti passa alla gestione del container detected
 		whenEvent containerDetected -> handleContainerDetected
 		//Allarme out of service
-		whenEvent sensorAlarm -> handleAlarm
+		whenInterruptEvent sensorAlarm -> handleAlarm
 	
 	State handleTimeoutExpired {
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red
@@ -106,6 +112,10 @@ QActor cargoservice context ctxcargosystem
             engaged = false
             num_empty_slot++
         #]
+        
+        //Spegnimento led
+        forward led -m stopBlink : stopBlink(0)
+        
         emit timeOut : timeOut(0)
 	}
 	Goto idle
@@ -122,7 +132,28 @@ QActor cargoservice context ctxcargosystem
 	}
 	Transition t2
 		whenReply doplandone -> handleDepositSuccess
-		whenReply do
+		whenReply doplanfailed -> handleDepositFailed
+		whenInterruptEvent sensorAlarm -> handleAlarm
+		
+	State handleDepositSuccess{
+		
+		println("$name | [DISENGAGED] container depositato con successo") color green 
+		[# engaged = false #]
+		
+		//Spengo led 
+		forward led -m stopBlink : stopBlink(0)
+		
+		//Emetto notifica fine carico
+		emit loadEnded : loadEnded(0) 
+		
+	}
+	Goto idle
+	
+	State handleDepositFailed{
+		// TODO : deposito fallito 
+		// boh va in out of service? PEnso sia da scrivere in "PROJECT"
+	}
+	Goto idle
 	
 	//STATO OUT OF SERVICE
 	
@@ -133,13 +164,28 @@ QActor cargoservice context ctxcargosystem
 	Goto outOfService
 	
 	State outOfService{
+		
+		//Spegnimento led
+        forward led -m stopBlink : stopBlink(0)
+        
 		println("$name | [OUT OF SERVICE] Sistema out of service!") color red
 	}
 	Transition tEndOOS
 		whenEvent endOOS -> handleEndOOS
 	
 	State handleEndOOS{
-		println("$name | [ENDING OOS] Riprendo da stato precedente") color green
+		println("$name | [ENDING OOS] Riprendo da idle") color green
+		if [# engaged == true #] {
+			
+			//Reset stato e libero slot aumentando numero di empty slot
+            [#
+                engaged = false
+                num_empty_slot++ 
+            #]
+            
+            forward led -m stopBlink : stopBlink(0)
+            emit timeOut : timeOut(0) 
+		}
 	}
 	Goto idle 
 }
@@ -194,6 +240,12 @@ QActor ioport context ctxcargosystem {
         // aggiornamento display 
     }
     Goto running
+}
+
+QActor led context ctxcargosystem{
+	State s0 initial{} 
+	
+	//TODO 
 }
 
 QActor sensor context ctxcargosystem {

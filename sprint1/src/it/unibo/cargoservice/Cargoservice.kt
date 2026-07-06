@@ -46,13 +46,15 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("idle") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | stato disingaged, attendo request")
+						 engaged = false  
+						CommUtils.outgreen("$name | [DISENGAGED] attendo request")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t00",targetState="handleLoadRequest",cond=whenRequest("loadRequest"))
+					interrupthandle(edgeName="t01",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
 				}	 
 				state("handleLoadRequest") { //this:State
 					action { //it:State
@@ -63,7 +65,8 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						
 							            num_empty_slot --
 							            engaged = true
-						CommUtils.outmagenta("$name | Request di carico accettata, stato engaged")
+						forward("startBlink", "startBlink(0)" ,"led" ) 
+						CommUtils.outmagenta("$name | [ENGAGED] Request di carico accettata")
 						}
 						else
 						 {if(  engaged == true  
@@ -93,9 +96,9 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				 	 		stateTimer = TimerActor("timer_waitingContainer", 
 				 	 					  scope, context!!, "local_tout_"+name+"_waitingContainer", 30000.toLong() )  //OCT2023
 					}	 	 
-					 transition(edgeName="t11",targetState="handleTimeoutExpired",cond=whenTimeout("local_tout_"+name+"_waitingContainer"))   
-					transition(edgeName="t12",targetState="handleContainerDetected",cond=whenEvent("containerDetected"))
-					transition(edgeName="t13",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
+					 transition(edgeName="t12",targetState="handleTimeoutExpired",cond=whenTimeout("local_tout_"+name+"_waitingContainer"))   
+					transition(edgeName="t13",targetState="handleContainerDetected",cond=whenEvent("containerDetected"))
+					interrupthandle(edgeName="t14",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
 				}	 
 				state("handleTimeoutExpired") { //this:State
 					action { //it:State
@@ -103,6 +106,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						
 						            engaged = false
 						            num_empty_slot++
+						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						emit("timeOut", "timeOut(0)" ) 
 						//genTimer( actor, state )
 					}
@@ -116,6 +120,40 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
 						CommUtils.outgreen("$name | [ENGAGED] Container rilevato ")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="movingRobot", cond=doswitch() )
+				}	 
+				state("movingRobot") { //this:State
+					action { //it:State
+						CommUtils.outmagenta("$name | [ENGAGED] Robot muove container verso slot")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t25",targetState="handleDepositSuccess",cond=whenReply("doplandone"))
+					transition(edgeName="t26",targetState="handleDepositFailed",cond=whenReply("doplanfailed"))
+					interrupthandle(edgeName="t27",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
+				}	 
+				state("handleDepositSuccess") { //this:State
+					action { //it:State
+						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo")
+						 engaged = false  
+						forward("stopBlink", "stopBlink(0)" ,"led" ) 
+						emit("loadEnded", "loadEnded(0)" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="idle", cond=doswitch() )
+				}	 
+				state("handleDepositFailed") { //this:State
+					action { //it:State
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -137,17 +175,25 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("outOfService") { //this:State
 					action { //it:State
+						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						CommUtils.outred("$name | [OUT OF SERVICE] Sistema out of service!")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="tEndOOS4",targetState="handleEndOOS",cond=whenEvent("endOOS"))
+					 transition(edgeName="tEndOOS8",targetState="handleEndOOS",cond=whenEvent("endOOS"))
 				}	 
 				state("handleEndOOS") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | [ENDING OOS] Riprendo da stato precedente")
+						CommUtils.outgreen("$name | [ENDING OOS] Riprendo da idle")
+						if(  engaged == true  
+						 ){
+						                engaged = false
+						                num_empty_slot++ 
+						forward("stopBlink", "stopBlink(0)" ,"led" ) 
+						emit("timeOut", "timeOut(0)" ) 
+						}
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002

@@ -20,11 +20,19 @@ event( containerDetected, containerDetected(X) ). %Emesso se D < DFREE/2 per 3s
 event( sensorAlarm, sensorAlarm(X) ). %Emesso se D > DFREE per 3s
 dispatch( startBlink, startBlink(X) ). %Gestione accensione blink LED
 dispatch( stopBlink, stopBlink(X) ). %Gestione spegnimento blink LED
+request( doplan, doplan(PLAN,STEPTIME) ). %execute PLAN with STEPTIME
+reply( doplandone, doplandone(ARG) ).  %%for doplan
+reply( doplanfailed, doplanfailed(PLANTODO) ).  %%for doplan
+dispatch( nextmove, nextmove(M) ). %autodispatch
+dispatch( nomoremove, nomoremove(M) ). %autodispatch
+event( alarm, alarm(X) ). %event at application level
 %====================================================================================
 context(ctxcargosystem, "localhost",  "TCP", "8020").
  qactor( cargoservice, ctxcargosystem, "it.unibo.cargoservice.Cargoservice").
  static(cargoservice).
   qactor( ioport, ctxcargosystem, "it.unibo.ioport.Ioport").
  static(ioport).
+  qactor( led, ctxcargosystem, "it.unibo.led.Led").
+ static(led).
   qactor( sensor, ctxcargosystem, "it.unibo.sensor.Sensor").
  static(sensor).

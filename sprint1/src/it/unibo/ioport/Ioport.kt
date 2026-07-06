@@ -49,7 +49,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t05",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					 transition(edgeName="t09",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
@@ -61,9 +61,9 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t06",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t07",targetState="handleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t08",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition(edgeName="t010",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t011",targetState="handleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t012",targetState="handleRetry",cond=whenReply("retryLater"))
 				}	 
 				state("handleEngaged") { //this:State
 					action { //it:State
