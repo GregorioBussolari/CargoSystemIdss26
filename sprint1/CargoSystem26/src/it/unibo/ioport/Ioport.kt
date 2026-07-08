@@ -29,11 +29,11 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		 var num = 0  
+		 var Num = 0  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name | starts - Interfaccia Utente")
+						CommUtils.outblue("$name | starts - Interfaccia Utente Disponibile")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -43,27 +43,27 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("running") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name | in attesa di un utente che prema il pulsante per iniziare")
+						CommUtils.outblue("$name | In attesa di un utente che prema il pulsante per iniziare")
+						 Num ++  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t09",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					 transition(edgeName="t015",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | Bottone premuto! Richiesta di carico arrivata, request verso cargoservice")
-						delay(200) 
-						request("loadRequest", "loadRequest(num)" ,"cargoservice" )  
+						request("loadRequest", "loadRequest($Num)" ,"cargoservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t010",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t011",targetState="handleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t012",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition(edgeName="t016",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t017",targetState="handleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t018",targetState="handleRetry",cond=whenReply("retryLater"))
 				}	 
 				state("handleEngaged") { //this:State
 					action { //it:State
@@ -71,7 +71,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 						 	   
 						if( checkMsgContent( Term.createTerm("loadEngaged(SLOT)"), Term.createTerm("loadEngaged(SLOT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 var slot = payloadArg(0).toInt()  
+								 var slot = payloadArg(0)  
 								CommUtils.outgreen("$name | Carico Accettato, slot assegnato $slot")
 						}
 						//genTimer( actor, state )

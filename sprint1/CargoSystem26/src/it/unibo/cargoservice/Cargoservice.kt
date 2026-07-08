@@ -31,12 +31,15 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
 		val hold = domain.Hold.fromConfigFile("properties.txt")
 		
-		        var num_empty_slot = 4        // caso simulato in cui la hold sia libera
-		        var engaged = false
+		    	val StepTime = 345 
+		//      var num_empty_slot = 4        // caso simulato in cui la hold sia libera
+		        var engaged = false			// stato cargoservice
+		        var SlotTarget : domain.ISlot? = null  //nullable
+		        var holdState = hold.toString()
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | starts - Inizializzazione Orchestratore Cargo Service")
+						CommUtils.outgreen("$name | starts - Inizializzazione Orchestratore Cargo Service: $holdState")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -60,13 +63,17 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					action { //it:State
 						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						if(  num_empty_slot > 0 && engaged == false  
-						 ){answer("loadRequest", "loadEngaged", "loadEngaged(1)"   )  
+						if(  !hold.isFull() && engaged == false  
+						 ){ 
+							    		val freeSlot = hold.findFreeSlot()
+							    		SlotTarget = freeSlot	//assegno a var globale
+							    		val SlotTargetId = freeSlot?.getName() ?: "Unknown"
+						answer("loadRequest", "loadEngaged", "loadEngaged($SlotTargetId)"   )  
 						
-							            num_empty_slot --
+						//	            num_empty_slot --
 							            engaged = true
 						forward("startBlink", "startBlink(0)" ,"led" ) 
-						CommUtils.outmagenta("$name | [ENGAGED] Request di carico accettata")
+						CommUtils.outmagenta("$name | [ENGAGED] Request di carico accettata, slot disponibile: $SlotTargetId")
 						}
 						else
 						 {if(  engaged == true  
@@ -89,6 +96,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("waitingContainer") { //this:State
 					action { //it:State
 						CommUtils.outmagenta("$name | [ENGAGED] attengo container entro 30s")
+						emit("startSensorRecording", "startSensortRecording(1)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -105,7 +113,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						CommUtils.outred("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged")
 						
 						            engaged = false
-						            num_empty_slot++
+						//            num_empty_slot++
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						emit("timeOut", "timeOut(0)" ) 
 						//genTimer( actor, state )
@@ -125,24 +133,71 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="movingRobot", cond=doswitch() )
+					 transition( edgeName="goto",targetState="startMoveToSensorArea", cond=doswitch() )
 				}	 
-				state("movingRobot") { //this:State
+				state("startMoveToSensorArea") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | [ENGAGED] Robot muove container verso slot")
+						CommUtils.outmagenta("$name | [ENGAGED] Robot move container verso Sensor Area")
+						
+									var SensorAreaX = hold.getIoPort().getX()
+									var SensorAreaY = hold.getIoPort().getY()
+						request("moverobot", "moverobot($SensorAreaX,$SensorAreaY,$StepTime)" ,"robotsmart26" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t25",targetState="handleDepositSuccess",cond=whenReply("doplandone"))
-					transition(edgeName="t26",targetState="handleDepositFailed",cond=whenReply("doplanfailed"))
-					interrupthandle(edgeName="t27",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
+					 transition(edgeName="t05",targetState="startMoveToSlot5",cond=whenReply("moverobotdone"))
+					transition(edgeName="t06",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t07",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
+				}	 
+				state("startMoveToSlot5") { //this:State
+					action { //it:State
+						CommUtils.outmagenta("$name | [ENGAGED] Carico recupertato in sensor area! Robot muove container verso Slot5")
+						
+									var Slot5X = hold.getSlot5().getX()
+									var Slot5Y = hold.getSlot5().getY()
+						request("moverobot", "moverobot($Slot5X,$Slot5Y,$StepTime)" ,"robotsmart26" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t08",targetState="markingSlot5",cond=whenReply("moverobotdone"))
+					transition(edgeName="t09",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t010",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
+				}	 
+				state("markingSlot5") { //this:State
+					action { //it:State
+						CommUtils.outgreen("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ")
+						delay(5000) 
+						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget")
+						
+									//Acquisizione coordinate target
+									var CoordTarget = hold.getSlotCoord(SlotTarget)
+									var TargetX = CoordTarget.getX()
+									var TargetY = CoordTarget.getY()
+						request("moverobot", "moverobot($TargetX,$TargetY,$StepTime)" ,"robotsmart26" )  
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t011",targetState="handleDepositSuccess",cond=whenReply("moverobotdone"))
+					transition(edgeName="t012",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
+					transition(edgeName="t013",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("handleDepositSuccess") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo")
-						 engaged = false  
+						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget")
+						
+									//occupazione slot da parte del container engaged
+									SlotTarget?.putContainer()
+									var holdState = hold.toString()
+									
+									
+									engaged = false
+						CommUtils.outgreen("$name | Stato Hold: $holdState")
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						emit("loadEnded", "loadEnded(0)" ) 
 						//genTimer( actor, state )
@@ -154,6 +209,13 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("handleDepositFailed") { //this:State
 					action { //it:State
+						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
+						 	   
+						CommUtils.outred("$name | [DISENGAGED] deposito fallito, RobotSmart26 non ha completato il piano")
+						
+									engaged = false
+						forward("stopBlink", "stopBlink(0)" ,"led" ) 
+						emit("timeOut", "timeOut(0)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -182,7 +244,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="tEndOOS8",targetState="handleEndOOS",cond=whenEvent("endOOS"))
+					 transition(edgeName="tEndOOS14",targetState="handleEndOOS",cond=whenEvent("endOOS"))
 				}	 
 				state("handleEndOOS") { //this:State
 					action { //it:State
@@ -190,7 +252,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						if(  engaged == true  
 						 ){
 						                engaged = false
-						                num_empty_slot++ 
+						//                num_empty_slot++ 
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						emit("timeOut", "timeOut(0)" ) 
 						}

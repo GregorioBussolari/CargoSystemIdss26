@@ -32,11 +32,44 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false, isdy
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						CommUtils.outmagenta("$name | starts - Mock LED")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
+				}	 
+				state("listening") { //this:State
+					action { //it:State
+						CommUtils.outmagenta("$name | in attesa di comandi di blink")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t019",targetState="ledOn",cond=whenDispatch("startBlink"))
+					transition(edgeName="t020",targetState="ledOff",cond=whenDispatch("stopBlink"))
+				}	 
+				state("ledOn") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name | LED lampeggiante (ON)")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
+				}	 
+				state("ledOff") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name | LED spento (OFF)")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="listening", cond=doswitch() )
 				}	 
 			}
 		}

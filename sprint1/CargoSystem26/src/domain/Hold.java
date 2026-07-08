@@ -45,6 +45,11 @@ public static class Coord {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+    
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
 }
 
 // Costruttore di base
@@ -175,6 +180,47 @@ public static class Coord {
 	    int x = Integer.parseInt(parts[0].trim());
 	    int y = Integer.parseInt(parts[1].trim());
 	    return new Coord(x, y);
+	}
+	
+	public ISlot getSlot(String name) {
+	    if (name == null || gridSlots.isEmpty()) {
+	        return null;
+	    }
+
+	    return gridSlots.values().stream()
+	            .filter(slot -> Objects.equals(slot.getName(), name))
+	            .findFirst()
+	            .orElse(null);
+	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("\n=================== HOLD STATUS ===================\n");
+	    sb.append(String.format("Dimensioni Griglia: %dx%d (D: %dm)\n", width, length, D));
+	    sb.append("Stato Stiva       : ").append(isFull() ? "COMPLETAMENTE PIENA" : "POSTI DISPONIBILI").append("\n");
+	    sb.append("---------------------------------------------------\n");
+	    sb.append("IO Port Coordinate: ").append(ioport != null ? ioport.toString() : "NON CONFIGURATA").append("\n");
+	    sb.append("Slot 5  Coordinate: ").append(slot5 != null ? slot5.toString() : "NON CONFIGURATA").append("\n");
+	    sb.append("---------------------------------------------------\n");
+	    sb.append("ELENCO SLOT E STATO CORRENTE:\n");
+
+	    if (gridSlots.isEmpty()) {
+	        sb.append(" Nessuno slot configurato nella mappa.\n");
+	    } else {
+	        // Ordiniamo gli slot per nome per avere una stampa pulita (Slot1, Slot2...)
+	        gridSlots.entrySet().stream()
+	            .sorted((e1, e2) -> e1.getValue().getName().compareTo(e2.getValue().getName()))
+	            .forEach(entry -> {
+	                Coord coord = entry.getKey();
+	                Slot slot = entry.getValue();
+	                String stato = slot.isOccupato() ? "[ OCCUPATO ]" : "[  LIBERO  ]";
+	                sb.append(String.format(" -> %-7s alle coordinate %-7s Stato: %s\n", 
+	                        slot.getName(), coord.toString(), stato));
+	            });
+	    }
+	    sb.append("===================================================");
+	    return sb.toString();
 	}
 
 

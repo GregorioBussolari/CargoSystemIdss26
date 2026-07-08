@@ -35,25 +35,30 @@ Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink 
 Event startSensorRecording : startSensortRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
 
 
+
 // --- Contesti ---
-Context ctxcargosystem    ip [host="localhost" port=8020]
-//Context ctxrobotservice26 ip [host="localhost" port=8025]
+
+Context ctxcargosystem ip [host="localhost" port=8120]
+Context ctxrobotservice26 ip [host="127.0.0.1" port=8020] 
 //Context ctxsensor         ip [host="localhost" port=8135]
 
-
 // robotsmart26 fornito dal committente
-//QActorExternal robotsmart26 context ctxrobotservice26
+ExternalQActor robotsmart26 context ctxrobotservice26
+
 
 QActor cargoservice context ctxcargosystem 
     withobj hold using "domain.Hold.fromConfigFile(\"properties.txt\")"{
     
     [#
-//        var num_empty_slot = 4        // caso simulato in cui la hold sia libera
+    	val StepTime = 345 
+//      var num_empty_slot = 4        // caso simulato in cui la hold sia libera
         var engaged = false			// stato cargoservice
+        var SlotTarget : domain.ISlot? = null  //nullable
+        var holdState = hold.toString()
     #]
     
     State s0 initial {
-        println("$name | starts - Inizializzazione Orchestratore Cargo Service") color green
+        println("$name | starts - Inizializzazione Orchestratore Cargo Service: $holdState") color green
     }
     Goto idle
 
@@ -70,8 +75,12 @@ QActor cargoservice context ctxcargosystem
 	    printCurrentMessage color yellow
 	
 	    if [# !hold.isFull() && engaged == false #] {
-	    	[# var SlotTarget = hold.findFreeSlot().getName()#]
-	        replyTo loadRequest with loadEngaged : loadEngaged($SlotTarget)
+	    	[# 
+	    		val freeSlot = hold.findFreeSlot()
+	    		SlotTarget = freeSlot	//assegno a var globale
+	    		val SlotTargetId = freeSlot?.getName() ?: "Unknown"
+	    	#]
+	        replyTo loadRequest with loadEngaged : loadEngaged($SlotTargetId)
 	        [#
 //	            num_empty_slot --
 	            engaged = true
@@ -80,7 +89,7 @@ QActor cargoservice context ctxcargosystem
 	        //Accensione led 
 	        forward led -m startBlink : startBlink(0)
 	        
-	        println("$name | [ENGAGED] Request di carico accettata") color magenta
+	        println("$name | [ENGAGED] Request di carico accettata, slot disponibile: $SlotTargetId") color magenta
 	    } else {
 	        if [# engaged == true #] {
 	            replyTo loadRequest with retryLater : retryLater(0)
@@ -122,24 +131,75 @@ QActor cargoservice context ctxcargosystem
 	State handleContainerDetected{
 		printCurrentMessage color yellow 
 		println("$name | [ENGAGED] Container rilevato ") color green
-		// TODO : meccanismo vs robotsmart26
-	}
-	Goto movingRobot
-	
-	State movingRobot{
-		println("$name | [ENGAGED] Robot muove container verso slot") color magenta
-	}
-	Transition t2
-		whenReply doplandone -> handleDepositSuccess
-		whenReply doplanfailed -> handleDepositFailed
-		whenInterruptEvent sensorAlarm -> handleAlarm
 		
+		
+	}
+	Goto startMoveToSensorArea
+	
+	State startMoveToSensorArea{
+		println("$name | [ENGAGED] Robot move container verso Sensor Area") color magenta
+		[#
+			var SensorAreaX = hold.getIoPort().getX()
+			var SensorAreaY = hold.getIoPort().getY()
+		#]
+		request robotsmart26 -m moverobot : moverobot($SensorAreaX, $SensorAreaY, $StepTime)
+	}Transition t0
+		whenReply moverobotdone -> startMoveToSlot5
+		whenReply moverobotfailed -> handleDepositFailed
+		whenEvent sensorAlarm -> handleAlarm
+
+	State startMoveToSlot5{
+		println("$name | [ENGAGED] Carico recupertato in sensor area! Robot muove container verso Slot5") color magenta
+
+		// Richiesta a robotsmart26: pianificazione ed esecuzione del percorso verso Slot5
+		[#
+			var Slot5X = hold.getSlot5().getX()
+			var Slot5Y = hold.getSlot5().getY()
+		#]
+		request robotsmart26 -m moverobot : moverobot($Slot5X, $Slot5Y, $StepTime)
+	}
+	Transition t0
+		whenReply moverobotdone -> markingSlot5
+		whenReply moverobotfailed -> handleDepositFailed
+		whenEvent sensorAlarm -> handleAlarm
+		
+		
+	State markingSlot5{
+		println("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ") color green 
+		
+		//simulazione labeling
+		delay 5000
+		
+		println("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget") color green 
+		[#
+			//Acquisizione coordinate target
+			var CoordTarget = hold.getSlotCoord(SlotTarget)
+			var TargetX = CoordTarget.getX()
+			var TargetY = CoordTarget.getY()
+		#]
+		
+		request robotsmart26 -m moverobot : moverobot($TargetX, $TargetY, $StepTime)
+	}
+	Transition t0
+		whenReply moverobotdone -> handleDepositSuccess
+		whenReply moverobotfailed -> handleDepositFailed
+		whenEvent sensorAlarm -> handleAlarm
+	
+	
 	State handleDepositSuccess{
 		
-		println("$name | [DISENGAGED] container depositato con successo") color green 
+		println("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget") color green 
 		
-		//Stato disengaged
-		[# engaged = false #]
+		[#
+			//occupazione slot da parte del container engaged
+			SlotTarget?.putContainer()
+			var holdState = hold.toString()
+			
+			
+			engaged = false
+		#]
+		println("$name | Stato Hold: $holdState") color green
+		
 		
 		//Spengo led 
 		forward led -m stopBlink : stopBlink(0)
@@ -151,10 +211,20 @@ QActor cargoservice context ctxcargosystem
 	Goto idle
 	
 	State handleDepositFailed{
-		// TODO : deposito fallito 
-		// boh va in idle? non ne sono sicuro
+		printCurrentMessage color yellow
+		println("$name | [DISENGAGED] deposito fallito, RobotSmart26 non ha completato il piano") color red
+
+		// Comportamento conservativo: trattato come un timeout (si veda nota TF6 nel Test Plan
+		// sulla politica di retry, punto ancora da rivalutare col committente)
+		[#
+			engaged = false
+		#]
+
+		forward led -m stopBlink : stopBlink(0)
+		emit timeOut : timeOut(0)
 	}
 	Goto idle
+
 	
 	//STATO OUT OF SERVICE
 	
@@ -181,7 +251,7 @@ QActor cargoservice context ctxcargosystem
 			//Reset stato e libero slot aumentando numero di empty slot
             [#
                 engaged = false
-                num_empty_slot++ 
+//                num_empty_slot++ 
             #]
             
             forward led -m stopBlink : stopBlink(0)
@@ -193,7 +263,7 @@ QActor cargoservice context ctxcargosystem
 
 QActor ioport context ctxcargosystem {
     
-    [# var num = 0 #]
+    [# var Num = 0 #]
     
     State s0 initial {
         println("$name | starts - Interfaccia Utente Disponibile") color blue
@@ -202,6 +272,7 @@ QActor ioport context ctxcargosystem {
     
     State running {
         println("$name | In attesa di un utente che prema il pulsante per iniziare") color blue
+        [# Num ++ #]
     }
     Transition t0
         whenMsg buttonPressed -> handleButtonPressed
@@ -209,8 +280,8 @@ QActor ioport context ctxcargosystem {
     State handleButtonPressed {
         // Stato di attesa di richieste da inviare a CargoService
         println("$name | Bottone premuto! Richiesta di carico arrivata, request verso cargoservice") color green
-        delay 200
-        request cargoservice -m loadRequest : loadRequest(num)
+ //       delay 200
+        request cargoservice -m loadRequest : loadRequest($Num)
     }
     Transition t0
         whenReply loadEngaged -> handleEngaged
@@ -221,7 +292,7 @@ QActor ioport context ctxcargosystem {
         printCurrentMessage color yellow
         
         onMsg(loadEngaged:loadEngaged(SLOT)) {
-            [# var slot = payloadArg(0).toInt() #]
+            [# var slot = payloadArg(0) #]
             println("$name | Carico Accettato, slot assegnato $slot") color green
             // aggiornamento display 
         }    
@@ -269,11 +340,6 @@ QActor led context ctxcargosystem{
 
 //mock per testare il funzionamento di sensor, no logica 
 QActor sensor context ctxcargosystem {
-
-    [#
-        var dfree = 100     // soglia di distanza libera (cm)
-        var distance = 100  // valore simulato della distanza rilevata
-    #]
 
     State s0 initial {
         println("$name | starts - Sensore") color cyan

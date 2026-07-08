@@ -38,6 +38,29 @@ class Sensor ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="monitoring", cond=doswitch() )
+				}	 
+				state("monitoring") { //this:State
+					action { //it:State
+						CommUtils.outcyan("$name | Attesa di richieste")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t021",targetState="handleRecording",cond=whenEvent("startSensorRecording"))
+				}	 
+				state("handleRecording") { //this:State
+					action { //it:State
+						CommUtils.outcyan("$name | rilevo presenza container")
+						delay(10000) 
+						emit("containerDetected", "containerDetected(1)" ) 
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t022",targetState="monitoring",cond=whenEvent("timeOut"))
 				}	 
 			}
 		}

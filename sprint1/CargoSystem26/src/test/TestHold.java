@@ -117,5 +117,20 @@ public class TestHold {
         assertFalse(libero.isOccupato());
     }
     
+    @Test
+    public void testGetSlotMap() {
+        // Situazione iniziale: tutti liberi, findFreeSlot prenderà il primo disponibile dal flusso
+    	hold.clearAllSlots();
+        
+        ISlot slot = hold.getSlot("Slot1");
+        assertFalse(slot.isOccupato());
+        
+        slot.putContainer();
+        assertEquals("Slot1", slot.getName());
+        assertTrue(slot.isOccupato());
+        
+        
+    }
+    
 
 }
