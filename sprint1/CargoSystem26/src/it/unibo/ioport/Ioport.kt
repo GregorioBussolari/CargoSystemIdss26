@@ -29,7 +29,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		var num = 0  
+		 var num = 0  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -49,7 +49,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t01",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					 transition(edgeName="t09",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
@@ -61,9 +61,9 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t02",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t03",targetState="hadleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t04",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition(edgeName="t010",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t011",targetState="handleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t012",targetState="handleRetry",cond=whenReply("retryLater"))
 				}	 
 				state("handleEngaged") { //this:State
 					action { //it:State
@@ -71,7 +71,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 						 	   
 						if( checkMsgContent( Term.createTerm("loadEngaged(SLOT)"), Term.createTerm("loadEngaged(SLOT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 var slot  = payloadArg(0).toInt()  
+								 var slot = payloadArg(0).toInt()  
 								CommUtils.outgreen("$name | Carico Accettato, slot assegnato $slot")
 						}
 						//genTimer( actor, state )
@@ -79,8 +79,9 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="running", cond=doswitch() )
 				}	 
-				state("hadleReject") { //this:State
+				state("handleReject") { //this:State
 					action { //it:State
 						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
@@ -90,6 +91,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="running", cond=doswitch() )
 				}	 
 				state("handleRetry") { //this:State
 					action { //it:State
@@ -101,6 +103,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
+					 transition( edgeName="goto",targetState="running", cond=doswitch() )
 				}	 
 			}
 		}

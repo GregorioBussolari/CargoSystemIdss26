@@ -2,11 +2,12 @@ package domain;
 
 public class Slot implements ISlot{
 	private String name;
-	private boolean occupato = false;
+	private boolean occupato;
 	//private Integer pid = null;
 	
 	public Slot(String name) {
 		this.name = name;
+		this.occupato = false;
 	}
 	
 	public boolean isOccupato() {

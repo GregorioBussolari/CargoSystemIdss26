@@ -1,13 +1,13 @@
 System cargosystem
 
 // --- IOPort <-> RobotSmart26 ---
-Event    alarm            : alarm(X)                "Allarme emesso dal robot"
-Dispatch move             : move(M)                 "MOVE = l|r|a|d|h  mosse ARIL sincrone"
-Dispatch setrobotstate    : setpos(X,Y,D)           "Forza posizione (X,Y) e direzione D"
-Request  setdirection     : dir(D)                  "Richiesta rotazione D=up|down|left|right"
-Reply    setdirectiondone : pos(PX,PY)              for setdirection
-Request  getrobotstate    : getrobotstate(ARG)      "Richiesta stato corrente"
-Reply    robotstate       : robotstate(POS,DIR)     for getrobotstate
+Request buildPlan : buildPlan( PX,PY,TX,TY ) "create plan from (PX,PY) to (TX,TY)"
+Reply buildPlanDone : buildPlanDone( PLAN ) for buildPlan
+Request moverobot : moverobot(TARGETX, TARGETY,STEPTIME) "move from curr pos to (TARGETX,TARGETY)"
+Reply moverobotdone : moverobotok(ARG) for moverobot
+Reply moverobotfailed: moverobotfailed(PLANDONE, PLANTODO) for moverobot
+Dispatch noplan : noplan(X) "autodispatch"
+Dispatch setplanbuildelay : value(V) "parameter = V >= 0"
 
 // --- IOPort <-> CargoService ---
 Request  loadRequest      : loadRequest(X)          "Richiesta di carico dall'operatore"
@@ -31,13 +31,9 @@ Event    sensorAlarm       : sensorAlarm(X)         "Emesso se D > DFREE per 3s"
 Dispatch startBlink       : startBlink(X)           "Gestione accensione blink LED"
 Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink LED"
 
-// --- Gestione RobotSmart26 ---
-Request  doplan 		  : doplan( PLAN, STEPTIME ) "execute PLAN with STEPTIME"
-Reply 	 doplandone 	  : doplandone( ARG ) for doplan
-Reply 	 doplanfailed     : doplanfailed( PLANTODO ) for doplan
-Dispatch nextmove 		  : nextmove(M) "autodispatch"
-Dispatch nomoremove 	  : nomoremove(M) "autodispatch"
-Event    alarm 			  : alarm(X) "event at application level"
+// ---Gestione Sensor MOCK ---
+Event startSensorRecording : startSensortRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
+
 
 // --- Contesti ---
 Context ctxcargosystem    ip [host="localhost" port=8020]
@@ -52,8 +48,8 @@ QActor cargoservice context ctxcargosystem
     withobj hold using "domain.Hold.fromConfigFile(\"properties.txt\")"{
     
     [#
-        var num_empty_slot = 4        // caso simulato in cui la hold sia libera
-        var engaged = false
+//        var num_empty_slot = 4        // caso simulato in cui la hold sia libera
+        var engaged = false			// stato cargoservice
     #]
     
     State s0 initial {
@@ -73,10 +69,11 @@ QActor cargoservice context ctxcargosystem
     State handleLoadRequest{
 	    printCurrentMessage color yellow
 	
-	    if [# num_empty_slot > 0 && engaged == false #] {
-	        replyTo loadRequest with loadEngaged : loadEngaged(1)
+	    if [# !hold.isFull() && engaged == false #] {
+	    	[# var SlotTarget = hold.findFreeSlot().getName()#]
+	        replyTo loadRequest with loadEngaged : loadEngaged($SlotTarget)
 	        [#
-	            num_empty_slot --
+//	            num_empty_slot --
 	            engaged = true
 	        #]
 	        
@@ -97,6 +94,8 @@ QActor cargoservice context ctxcargosystem
 	
 	State waitingContainer {
 		 println("$name | [ENGAGED] attengo container entro 30s") color magenta
+		 
+		 emit startSensorRecording : startSensortRecording(1)
 	}
 	Transition t1
 		//Dopo 30 secondi scade
@@ -110,7 +109,7 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red
 		[#
             engaged = false
-            num_empty_slot++
+//            num_empty_slot++
         #]
         
         //Spegnimento led
@@ -197,12 +196,12 @@ QActor ioport context ctxcargosystem {
     [# var num = 0 #]
     
     State s0 initial {
-        println("$name | starts - Interfaccia Utente") color blue
+        println("$name | starts - Interfaccia Utente Disponibile") color blue
     }
     Goto running
     
     State running {
-        println("$name | in attesa di un utente che prema il pulsante per iniziare") color blue
+        println("$name | In attesa di un utente che prema il pulsante per iniziare") color blue
     }
     Transition t0
         whenMsg buttonPressed -> handleButtonPressed
@@ -245,14 +244,55 @@ QActor ioport context ctxcargosystem {
 }
 
 QActor led context ctxcargosystem{
-	State s0 initial{} 
-	
-	//TODO 
+	State s0 initial{
+		println("$name | starts - Mock LED") color magenta
+	}
+	Goto listening
+
+	State listening {
+		println("$name | in attesa di comandi di blink") color magenta
+	}
+	Transition t0
+		whenMsg startBlink -> ledOn
+		whenMsg stopBlink -> ledOff
+
+	State ledOn {
+		println("$name | LED lampeggiante (ON)") color yellow
+	}
+	Goto listening
+
+	State ledOff {
+		println("$name | LED spento (OFF)") color yellow
+	}
+	Goto listening
 }
 
+//mock per testare il funzionamento di sensor, no logica 
 QActor sensor context ctxcargosystem {
+
+    [#
+        var dfree = 100     // soglia di distanza libera (cm)
+        var distance = 100  // valore simulato della distanza rilevata
+    #]
+
     State s0 initial {
         println("$name | starts - Sensore") color cyan
         // Il sensore applicherà logicamente le soglie DFREE per emettere eventi
     }
+    Goto monitoring
+    
+    State monitoring{
+    	println("$name | Attesa di richieste") color cyan
+    }Transition t0 
+    	whenEvent startSensorRecording -> handleRecording
+    	
+   	State handleRecording{
+   		println("$name | rilevo presenza container") color cyan
+   		delay 10000
+   		
+   		//simulazione invio container detected
+   		emit containerDetected : containerDetected(1)
+   	}Transition t0 
+    	whenEvent timeOut -> monitoring
+    
 }
