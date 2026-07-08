@@ -53,7 +53,7 @@ class Sensor ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				state("handleRecording") { //this:State
 					action { //it:State
 						CommUtils.outcyan("$name | rilevo presenza container")
-						delay(5000) 
+						delay(10000) 
 						emit("containerDetected", "containerDetected(1)" ) 
 						//genTimer( actor, state )
 					}

@@ -168,9 +168,9 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ") color green 
 		
 		//simulazione labeling
-		delay 10000
+		delay 5000
 		
-		println("$name | [ENGAGED] container etichettato, robot in movimento  verso lo slot assegnato") color green 
+		println("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget") color green 
 		[#
 			//Acquisizione coordinate target
 			var CoordTarget = hold.getSlotCoord(SlotTarget)
@@ -188,7 +188,7 @@ QActor cargoservice context ctxcargosystem
 	
 	State handleDepositSuccess{
 		
-		println("$name | [DISENGAGED] container depositato con successo nello slot assegnato") color green 
+		println("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget") color green 
 		
 		[#
 			//occupazione slot da parte del container engaged
@@ -354,7 +354,7 @@ QActor sensor context ctxcargosystem {
     	
    	State handleRecording{
    		println("$name | rilevo presenza container") color cyan
-   		delay 5000
+   		delay 10000
    		
    		//simulazione invio container detected
    		emit containerDetected : containerDetected(1)

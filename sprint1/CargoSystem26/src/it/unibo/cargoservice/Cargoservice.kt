@@ -170,8 +170,8 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("markingSlot5") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ")
-						delay(10000) 
-						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso lo slot assegnato")
+						delay(5000) 
+						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget")
 						
 									//Acquisizione coordinate target
 									var CoordTarget = hold.getSlotCoord(SlotTarget)
@@ -189,7 +189,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("handleDepositSuccess") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot assegnato")
+						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget")
 						
 									//occupazione slot da parte del container engaged
 									SlotTarget?.putContainer()
