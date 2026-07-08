@@ -141,7 +141,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						
 									var SensorAreaX = hold.getIoPort().getX()
 									var SensorAreaY = hold.getIoPort().getY()
-						request("moverobot", "moverobot($SensorAreaX,$SensorAreaY,$StepTime)" ,"robotsmart26" )  
+						request("moverobot", "moverobot($SensorAreaX,$SensorAreaY,$StepTime)" ,"robotsmart" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -157,7 +157,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						
 									var Slot5X = hold.getSlot5().getX()
 									var Slot5Y = hold.getSlot5().getY()
-						request("moverobot", "moverobot($Slot5X,$Slot5Y,$StepTime)" ,"robotsmart26" )  
+						request("moverobot", "moverobot($Slot5X,$Slot5Y,$StepTime)" ,"robotsmart" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -170,14 +170,14 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("markingSlot5") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ")
-						delay(5000) 
-						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget")
+						delay(10000) 
+						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso lo slot assegnato")
 						
 									//Acquisizione coordinate target
 									var CoordTarget = hold.getSlotCoord(SlotTarget)
 									var TargetX = CoordTarget.getX()
 									var TargetY = CoordTarget.getY()
-						request("moverobot", "moverobot($TargetX,$TargetY,$StepTime)" ,"robotsmart26" )  
+						request("moverobot", "moverobot($TargetX,$TargetY,$StepTime)" ,"robotsmart" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -189,7 +189,7 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("handleDepositSuccess") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget")
+						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot assegnato")
 						
 									//occupazione slot da parte del container engaged
 									SlotTarget?.putContainer()

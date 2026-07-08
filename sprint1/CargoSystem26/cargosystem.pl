@@ -23,8 +23,8 @@ dispatch( stopBlink, stopBlink(X) ). %Gestione spegnimento blink LED
 event( startSensorRecording, startSensortRecording(X) ). %Inizio fase di rilevazione dei 30 secondi
 %====================================================================================
 context(ctxcargosystem, "localhost",  "TCP", "8120").
-context(ctxrobotservice26, "127.0.0.1",  "TCP", "8020").
- qactor( robotsmart26, ctxrobotservice26, "external").
+context(ctxrobotsmart, "127.0.0.1",  "TCP", "8020").
+ qactor( robotsmart, ctxrobotsmart, "external").
   qactor( cargoservice, ctxcargosystem, "it.unibo.cargoservice.Cargoservice").
  static(cargoservice).
   qactor( ioport, ctxcargosystem, "it.unibo.ioport.Ioport").
