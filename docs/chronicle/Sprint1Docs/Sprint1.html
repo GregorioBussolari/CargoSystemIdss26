@@ -1,0 +1,988 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Sprint 1</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure,
+aside,
+details {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3904730f-99ce-801a-a79b-fd895414cc37" class="page sans"><header><h1 class="page-title" dir="auto">Sprint 1</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h1 id="3904730f-99ce-802b-a6de-f7107e3d585f" class="" dir="auto">Introduzione</h1><p id="3904730f-99ce-8035-bcb2-e9b1efd48f7c" class="" dir="auto">Lo Sprint 1 mira ad analizzare e formalizzare il goal delineato dallo Sprint 0 in riferimento ai requisiti richiesti dal committente. In particolare, prende come punto di partenza il modello definito in fase di analisi dei requisiti. Si rimanda pertanto al <a href="https://gregoriobussolari.github.io/CargoSystemIdss26/chronicle/Sprint0Docs/requisiti.html">documento fornito dal committente</a> e allo <a href="https://gregoriobussolari.github.io/CargoSystemIdss26/chronicle/Sprint0Docs/Sprint0.html">Sprint 0.</a></p><h1 id="3904730f-99ce-8078-89de-c3fca0e11bc8" class="" dir="auto">Requisiti</h1><p id="3914730f-99ce-80d3-a301-d5802a692b56" class="" dir="auto">I requisiti completi del sistema sono stati analizzati e formalizzati durante lo <a href="https://gregoriobussolari.github.io/CargoSystemIdss26/chronicle/Sprint0Docs/Sprint0.html">Sprint 0</a> e sono consultabili alla seguente <a href="https://gregoriobussolari.github.io/CargoSystemIdss26/chronicle/Sprint0Docs/requisiti.html">pagina</a>. </p><p id="3914730f-99ce-80e9-9481-d306287068c4" class="" dir="auto">Di seguito si riportano i punti rilevanti per il goal dello Sprint 1.</p><ol type="1" id="3904730f-99ce-8086-ab9a-e4df484d0944" class="numbered-list" start="1" dir="auto"><li>Il sistema dev’essere in grado di:<ul id="3904730f-99ce-809d-81a1-d822ecd2fee5" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> Ricevere una richiesta di carico da <code>IOPort</code></li></ul><ul id="3904730f-99ce-80b8-92bd-f6b35b19cf6d" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> Valutare successivamente lo stato della <code>Hold</code> (ossia la disponibilità degli slot)</li></ul><ul id="3904730f-99ce-804f-80e4-d058d5bc77e2" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> Rispondere con la reply appropriata</li></ul><p id="3904730f-99ce-80f3-8e36-e406254e76f9" class="" dir="auto">Se la richiesta è accettata e ci sono abbastanza slot liberi il sistema si considera <code>engaged</code> e il CargoService deve fornire come risposta il nome dello slot libero assegnato. </p></li></ol><ol type="1" id="3904730f-99ce-8055-be02-f62eababab55" class="numbered-list" start="2" dir="auto"><li>Quando il sistema è engaged deve essere fatto lampeggiare un led.</li></ol><ol type="1" id="3904730f-99ce-803b-a540-cac2aff7f4a0" class="numbered-list" start="3" dir="auto"><li>Il cliente deve spostare il container entro il tempo previsto di 30 secondi, viceversa il sistema entra nello stato disengaged.</li></ol><ol type="1" id="3904730f-99ce-80f2-9fc6-f54a2576f9d4" class="numbered-list" start="4" dir="auto"><li>Ricevuta conferma della consegna entro i tempi previsti, CargoService usa CargoRobot per spostare il container dalla posizione corrente a Slot5.</li></ol><ol type="1" id="3904730f-99ce-80a7-98ad-ff7d1ca9c2e6" class="numbered-list" start="5" dir="auto"><li>ll DDR sosta in Slot5 per un tempo predefinito (delay) per la fase di barcode labeling. </li></ol><ol type="1" id="3904730f-99ce-80b2-9f52-d0a790d91804" class="numbered-list" start="6" dir="auto"><li>Completato il delay in Slot5, CargoService ordina a RobotSmart di muovere il carico da Slot5 allo slot riservato.</li></ol><ol type="1" id="3904730f-99ce-80d4-902b-dd4ddbed3c44" class="numbered-list" start="7" dir="auto"><li>Il sistema torna in stato disengaged</li></ol><h1 id="3984730f-99ce-803a-91fc-dfc118ff058a" class="" dir="auto">Analisi dei requisiti</h1><p id="3984730f-99ce-8020-8f57-f1ae7ee78f65" class="" dir="auto">In questa fase ci si concentra sul <em>core business</em> del sistema, ovvero la logica di coordinamento centrale. L&#x27;obiettivo è definire il comportamento dell&#x27;entità CargoService, la quale deve coordinare il movimento del DDR all’interno della <em>Hold</em> e gestire le interazioni logiche con i nodi periferici.<br/>Anche se i componenti periferici (IOPort, Sensor, LED) non saranno realizzati fisicamente in questo sprint, è necessario definire fin da ora le entità del dominio e le informazioni logiche che esse si scambieranno con il CargoService:</p><ul id="3984730f-99ce-80ad-a2ad-d5f01c73dace" class="bulleted-list" dir="auto"><li style="list-style-type:disc"> <strong>IOPort:</strong> entità preposta all&#x27;interazione con l&#x27;utente. Deve poter inviare una richiesta di carico al sistema e ricevere una risposta sull&#x27;esito (accettata con assegnazione dello slot, rifiutata, o sistema occupato).</li></ul><ul id="499f7299-34b9-4652-bd7d-0958c0a468ad" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Sensor (Sonar):</strong> entità proattiva che osserva l&#x27;ambiente. Deve notificare al sistema due eventi di business fondamentali: l&#x27;avvenuto posizionamento del container (entro i tempi previsti) e il superamento prolungato della soglia di sicurezza (che denota un&#x27;anomalia).</li></ul><ul id="172ac765-9764-4248-8947-b5e876cec2c6" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>LED:</strong> entità reattiva che funge da attuatore visivo. Deve ricevere i comandi di accensione (lampeggio) e spegnimento in base allo stato di impegno (<em>engaged</em>/<em>disengaged</em>) del sistema.</li></ul><p id="c7067d1b-1a6f-449c-969e-ae74a2025ac5" class="" dir="auto"><strong>Assunzioni esplicite di questo sprint</strong><br/>Di seguito si riportano alcune assunzioni lasciate aperte dal documento dei requisiti fornito dal committente:</p><ul id="e9867189-7dee-4769-9f74-4366e78bd9aa" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Reversibilità dell&#x27;Out Of Service:</strong> Negli appunti di analisi il committente lascia esplicitamente aperta la domanda se lo stato di <code>outOfService</code> sia definitivo o se il sistema possa tornare autonomamente operativo quando il sonar rileva di nuovo una distanza regolare. In questo sprint si assume la soluzione più conservativa e sicura: l&#x27;uscita da <code>outOfService</code> avviene solo tramite un intervento/evento esplicito (es. un segnale di ripristino <code>endOOS</code>), mai automaticamente al rientro nella norma del sensore.</li></ul><ul id="3b9ac089-1294-4d15-9f90-810f7317bda7" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Messaggi di display dell&#x27;IOPort:</strong> Il committente richiede che il display dell&#x27;IOPort mostri messaggi testuali informativi (es. <em>Service working</em> / <em>Out of service</em>). Essendo l&#x27;obiettivo di questo sprint la sola logica di backend, l&#x27;implementazione del requisito visivo e dell&#x27;interfaccia grafica è rimandata esplicitamente allo Sprint 2 (realizzazione della WebGUI).</li></ul><h2 id="3904730f-99ce-8009-ac80-e387cad5d539" class="" dir="auto"><strong>Hold e Slot</strong></h2><p id="3904730f-99ce-80ea-8355-dcbdf9ea9748" class="" dir="auto">I requisiti richiedono la gestione dello spazio fisico della stiva (Hold) e dei relativi sotto-spazi (Slot). Essendo stato scelto l&#x27;asset RobotSmart26 per la movimentazione, lo spazio deve essere formalizzato come una mappa bidimensionale, necessaria al software per pianificare le traiettorie ed evitare collisioni.</p><p id="3984730f-99ce-80bb-b669-db4cefb0db3d" class="" dir="auto">Si formalizza il dominio spaziale come segue:</p><ul id="3904730f-99ce-80be-b10c-d434d79444ba" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>L&#x27;Unità Robotica (L):</strong> Considerando il DDR inscrivibile in un cerchio di raggio R, si definisce <em>unità robotica</em> il lato L = 2R del quadrato circoscritto. Tale grandezza discreta diviene l&#x27;unità di misura logica della stiva.</li></ul><ul id="3904730f-99ce-80fd-9326-d40e4334396c" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Modello della Hold:</strong> La stiva è formalizzata come una griglia discreta (matrice) divisa in celle di lato L. Le posizioni sono identificate da coordinate logiche (X, Y).<br/><figure id="3904730f-99ce-807f-a26a-ebb3a5efac71" class="image" style="text-align:center" data-notion-image="Sprint%201/canvas.png" dir="ltr"><a href="Sprint%201/canvas.png"><img style="width:336px" src="Sprint%201/canvas.png"/></a></figure><p id="acf5954a-31e6-41c6-931b-1a9d643f5a95" class="" dir="auto">Affinché RobotSmart26 non collida con gli scaffali, le coordinate fisiche degli Slot vengono mappate logicamente come ostacoli all&#x27;interno della griglia spaziale.<br/>L&#x27;interfaccia <code>IHold</code>astrae questa rappresentazione, esponendo all&#x27;orchestratore esclusivamente i metodi necessari per interrogare lo stato della stiva e recuperare le coordinate target:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js" integrity="sha512-xKcnbsdT0KMoA4yrozkqZM1XJVTrPsjdQwvigxlAlxEDu8YDvC/jl+LfVqn0fY3Vs6m2y4a89JCHEIA/Z9zpmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3904730f-99ce-80d2-a2e5-e278375d68dd" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public interface IHold {
+    // Primitive 
+    boolean isFull();                         // True se non ci sono più slot di stoccaggio liberi
+    ISlot findFreeSlot();                     // Restituisce un ISlot libero (o null)
+    ISlot getSlot(String name);               // Recupera l&#x27;entità slot per aggiornarne lo stato
+
+    // Non primitive: Metodi relativi al mapping spaziale 
+    Hold.Coord getSlotCoord(ISlot slot);      // Coordinata OSTACOLO (ingombro fisico dello scaffale)
+    Hold.Coord getSlot5();                    // Coordinata di deposito di Slot5
+    Hold.Coord getIoPort();                   // Coordinata di prelievo della IOPort
+}</code></pre><p id="3904730f-99ce-80b0-9965-d3b941127e1b" class="" dir="auto">Al fine di rappresentare le posizioni, si definisce la classe <code>Coord</code> e si abbozza la struttura logica della <code>Hold</code>:</p><pre id="3904730f-99ce-80ab-acfe-fd49fd92176a" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">
+public class Hold implements IHold{
+		private int D;        // dimensione unità robotica
+    private int width;    // larghezza hold (in unità robotiche)
+    private int length;   // lunghezza hold (in unità robotiche)
+    private int[][] grid; // griglia hold
+    
+    public static class Coord {
+        private final int x;
+        private final int y;
+    }
+}</code></pre></li></ul><p id="623315e2-9b3b-4ccb-a03b-0cb921b2b50f" class="" dir="auto">Il sistema presenta un limite quantitativo rigido (capienza massima di 4 container).</p><ul id="9960e87a-93a9-44b1-a164-ff5210bc8445" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Slot 1-4:</strong> Aree quadrate di stoccaggio permanente. Ogni slot è un’entità logica dotata di uno stato di occupazione.</li></ul><ul id="14ac2ce8-ae1f-473a-844a-221eefa0d83d" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Slot 5:</strong> Area temporanea per la marcatura barcode, priva di stato di stoccaggio persistente (non influisce sul calcolo di <code>isFull()</code>).</li></ul><p id="8ebe0e49-92df-4b69-a6fb-9af375e980c7" class="" dir="auto">Per tracciare lo stato, necessario a CargoService per l&#x27;accettazione/rifiuto delle richieste, si formalizza l&#x27;entità <code>Slot</code> (riferita esclusivamente agli slot 1-4):</p><pre id="3904730f-99ce-8089-98e8-cf23b3b5574e" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public interface ISlot {
+	 //primitive
+	 String getName();         // Nome identificativo (es. &quot;Slot1&quot;)
+	 boolean isOccupato();     // Stato corrente
+	 //non primitive
+	 void putContainer();      // Inserisce container (occupato = true)
+	 void removeContainer();   // Rimuove container (occupato = false)
+}</code></pre><p id="3914730f-99ce-8070-b969-d9c5522eaa4f" class="" dir="auto">Al fine di formalizzare l’entità Slot si definiscono così le proprietà essenziali:</p><pre id="3904730f-99ce-8048-a5ee-cfc6a9cda5ab" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public class Slot implements ISlot{
+    private String name;              // &quot;SlotN&quot;
+    private boolean occupato = false; // Stato dello slot (occupato o libero)
+}</code></pre><p id="3904730f-99ce-800d-8e30-f2af28847473" class="" dir="auto"><strong>Tracciamento dello Stato:</strong> In base ai requisiti, CargoService deve mantenere costantemente traccia dello stato di occupazione di ciascuno slot per poter implementare correttamente la logica di accettazione o rifiuto delle nuove richieste di carico.</p><h1 id="3904730f-99ce-8060-9491-e41b04cf7f0e" class="" dir="auto">Analisi del Problema</h1><p id="3904730f-99ce-803a-a76c-fc537cf168cc" class="" dir="auto">Come già visto nell’Analisi dei Requisiti, lo sprint corrente ha come obiettivo muovere il DDR all’interno della stiva. A tale scopo, in base alle considerazioni fatte durante lo Sprint 0 si è scelto di utilizzare come CargoRobot l’asset fornito dalla software house “RobotSmart26”.</p><h2 id="3914730f-99ce-80ce-b6bf-cead13e969fa" class="" dir="auto">CargoRobot</h2><p id="3914730f-99ce-8090-b9f5-e7bcda5ba6ca" class="" dir="auto">Tale servizio ha come compito quello di spostare il DDR in una posizione specificata. Lo spostamento può avvenire tramite una sequenza di messaggi move(M) inviata da CargoService, dove M indica una particolare mossa <em><a href="https://anatali.github.io/issLab2026/_static/docs/Protobook.pdf#subsection.27.1.1">aril</a></em>. Tuttavia, questa pianificazione di mosse non deve essere responsabilità di CargoService, il cui compito è soltanto comandare il DDR affinchè si sposti nella regione target.</p><p id="3914730f-99ce-8073-9d35-d7e2a520d4b1" class="" dir="auto">In fase di analisi è stata introdotta la mappa della Hold come griglia di interi, nella quale il concetto di posizione viene formalizzato come una coppia di coordinate cartesiane che identifica una cella della matrice. Da questa formalizzazione è possibile generare una mappa logica della Hold che vede le posizioni occupate da ostacoli identificate con il valore 1, le posizioni libere identificate con il valore 0 e la posizione del robot identificata da r. </p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3914730f-99ce-80c2-a1b5-c78b2f8078fe" dir="ltr"><div style="width:100%"><p id="3914730f-99ce-805f-8eeb-d68fcdd04594" class="" dir="auto">|r, 0, 0, 0, 0, 0<br/>|0, 1, 0, 1, 0, 0<br/>|0, 0, 0, 0, 1, 0<br/>|0, 1, 0, 1, 0, 0<br/>|0, 0, 0, 0, 0, 0<br/>|0, 0, 0, 0, 0, 0</p></div></aside><p id="3914730f-99ce-8087-acc5-c81e4bdc742e" class="" dir="auto"><a href="https://anatali.github.io/issLab2026/_static/docs/Protobook.pdf#subsection.30.3.1">RobotSmart26</a> fornisce la possibilità di ottenere una mappa come matrice<code>int[][]</code>, partendo da una stringa memorizzata nel file dato del tipo:</p><aside class="block-color-gray_background callout" data-notion-callout="" data-notion-callout-background="gray_background" style="white-space:pre-wrap;display:flex" id="3914730f-99ce-80bd-9c4f-ce2b1746c70e" dir="ltr"><div style="width:100%"><p id="3914730f-99ce-800a-aa11-def81cf2dc23" class="" dir="auto">0000001@0011001@0000101@0011001@0000001@1111111</p></div></aside><p id="3914730f-99ce-8006-a18f-de74bd8864e1" class="" dir="auto">Pertanto, RobotSmart26 mantiene una mappa interna, che in questa prima fase può essere semplicemente precaricata e fissa, impostando ostacoli e parti libere a priori. Tuttavia, in uno sviluppo successivo può essere il robot stesso ad esplorare la hold creandosi autonomamente la mappa, ad esempio tramite un’applicazione che esplora in maniera sistematica la stiva all’avvio. </p><p id="8848b03a-39d3-481f-875d-9bf346876406" class="" dir="auto">RobotSmart26 colma quindi l&#x27;abstraction gap tra il dominio applicativo e il livello di comando del DDR, eseguendo una pianificazione automatica data una destinazione finale. In fase di analisi spaziale si era valutata la necessità di distinguere la coordinata di ingombro fisico dello Slot (ostacolo) dalla coordinata della cella adiacente di deposito (<em>Drop Point</em>). Tuttavia, testando empiricamente l&#x27;asset, si è verificato che il suo servizio di pianificazione gestisce nativamente come target le coordinate fisiche dell&#x27;ostacolo, assorbendo la logica di prossimità senza fallire.<br/>Pertanto, al fine di mantenere il modello di CargoService e l&#x27;astrazione <code>IHold</code> semplici e puliti, si è scelto di mantenere un&#x27;unica coordinata spaziale delegando al robot la risoluzione del deposito. Di seguito è riportata l’interfaccia di messaggi necessaria per interagire con tale servizio:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js" integrity="sha512-nLUQ1JXk2Kj5a8FlfriL+WmiGbAq3W/dQirx3IlVfkpU7byrzLD19pJnYsG8vPTDvsRMpQDVSezvzkKUNcqUSw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3914730f-99ce-809c-86a2-fa14d9f36544" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Request buildPlan : buildPlan( PX,PY,TX,TY ) &quot;create plan from (PX,PY) to (TX,TY)&quot;
+Reply buildPlanDone : buildPlanDone( PLAN ) for buildPlan
+Request moverobot : moverobot(TARGETX, TARGETY,STEPTIME) &quot;move from curr pos to (TARGETX,TARGETY)&quot;
+Reply moverobotdone : moverobotok(ARG) for moverobot
+Reply moverobotfailed: moverobotfailed(PLANDONE, PLANTODO) for moverobot
+Dispatch noplan : noplan(X) &quot;autodispatch&quot;
+Dispatch setplanbuildelay : value(V) &quot;parameter = V &gt;= 0&quot;</code></pre><h2 id="3914730f-99ce-8042-bc8b-c4205517a140" class="" dir="auto">CargoService</h2><p id="3924730f-99ce-8072-bd00-d7f715c94d66" class="" dir="auto">CargoService funge da entità centrale che coordina le interazioni fra i vari componenti del sistema. La sua responsabilità è quindi la gestione del ciclo di vita delle richieste di carico.</p><p id="3924730f-99ce-803c-852b-de001811ea50" class="" dir="auto">A tal scopo, CargoService opera come una macchina a stati finiti, gestendo le transizioni del sistema tra i vari stati (<code>engaged</code>, <code>disengaged</code> e <code>outOfService</code>).</p><p id="3924730f-99ce-80cf-8053-cc322935fe10" class="" dir="auto">L’architettura di CargoService è strutturata per garantire disaccoppiamento tra la logica di business e le specifiche implementazioni degli altri nodi (IOPort, Sensor, Robot). Questa scelta permette a CargoService di gestire le richieste senza dipendere dalla tecnologia di realizzazione degli altri nodi. Tale disacoppiamento è ottenuto tramite un modello di comunicazione a scambio di messaggi implementato tramite i messaggi di QAK.</p><h4 id="3984730f-99ce-8090-8ca6-e615e874d504" class="" dir="auto"><strong>CargoService e Hold</strong></h4><p id="3984730f-99ce-80aa-b318-de477e812a27" class="" dir="auto">CargoService dovrà interagire con la Hold definita secondo le specifiche richieste dal sistema. In particolare come specificato in precedenza, la Hold deve avere a disposizione le coordinate con cui si può accedere agli slot e alla sensor area. CargoService accedendo a queste coordinate, potrà delegare a RobotSmart26 il movimento del ddr indicando la posizione target da raggiungere in ogni stato raggiunto. A sua volta RobotSmart26 avrà a disposizione la mappa della hold e dei relativi ostacoli, con cui potrà pianificare il percorso migliore da compiere per arrivare a destinazione. Nello specifico si formalizza come segue:</p><ul id="3984730f-99ce-8064-96f9-f815ac79c823" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Gli slot fisici e i perimetri sono marcati come <strong>ostacoli (valore 1)</strong> nella mappa binaria in dotazione a RobotSmart26.</li></ul><ul id="3984730f-99ce-8081-b042-f6047ffe8055" class="bulleted-list" dir="auto"><li style="list-style-type:disc">La classe Hold memorizza invece le <strong>posizioni di interazione/scarico (valore 0)</strong>, ovvero le celle libere e adiacenti agli ostacoli da cui il robot può operare.</li></ul><p id="3984730f-99ce-8017-a4dd-ead9e8ca2353" class="" dir="auto">CargoService deve pertanto poter accedere allo stato della hold all’avvio del sistema, prendendo le coordinate richieste e le dimensioni specifiche della hold su richiesta. Ulteriori dettagli implementativi sono rimandati alla fase di progetto.</p><h3 id="3924730f-99ce-80f0-ae29-d9c444d224d9" class="" dir="auto">Nodi Computazionali</h3><p id="3924730f-99ce-8056-b21f-f738b0945740" class="" dir="auto">Restano confermati i 4 nodi computazionali individuati in Sprint 0. In questo Sprint, IOPort e Sensor sono collocati, per semplicità di sviluppo e testing, nello stesso contesto di cargoservice (contextcargosystem): si tratta di una scelta per l&#x27;attuale fase di prototipazione, esplicitamente reversibile, In Sprint 2 IOPort (reale) e in Sprint 3 il Sensor (su PicoW) saranno spostati nei rispettivi contesti remoti, senza che il modello dei messaggi debba cambiare, proprio perché l&#x27;interazione è già oggi basata esclusivamente su scambio di messaggi tra attori.</p><h3 id="3914730f-99ce-8030-a6e1-deb3ecb7eaa6" class="" dir="auto"><strong>Gestione del Tempo e degli Eventi Sensoriali</strong></h3><p id="4cd8cc67-42dd-4718-bacc-4b774ab5519c" class="" dir="auto">L’orchestratore deve garantire il rispetto dei vincoli temporali previsti per il posizionamento del container (la regola dei 30 secondi) e reagire in modo asincrono ai dati provenienti dall’ambiente fisico.<br/>Al fine di mantenere il sistema reattivo e non bloccante, si è scelto di modellare le interazioni sensoriali e i timeout sfruttando le primitive avanzate della macchina a stati QAK, evitando l&#x27;uso di polling o timer esterni:</p><ul id="75cbc474-eed6-4749-9c96-03810b8dc4e9" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Gestione del Timeout (30s):</strong> L&#x27;attesa del container viene modellata in uno stato dedicato che sfrutta la transizione temporizzata nativa <code>whenTime 30000</code>. Se il tempo limite scade, l’orchestratore forza il ritorno allo stato <em>disengaged</em> e ne informa contestualmente IOPort e gli altri componenti interessati emettendo un evento asincrono di dominio (<code>timeOut</code>).</li></ul><ul id="ae4f9eed-c733-4841-9def-2eeae195560d" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Rilevamento Container:</strong> Viene gestito tramite la ricezione dell&#x27;evento <code>containerDetected</code> emesso dal sensore, che innesca la normale transizione verso la fase di pianificazione del tragitto.</li></ul><ul id="0bb995a7-a5bc-49b2-a932-eb6036530112" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><strong>Reattività alle Anomalie (Allarmi):</strong> Qualora il sonar rilevi un’anomalia prolungata (sintomo di un guasto), emette l&#x27;evento <code>sensorAlarm</code>. Per garantire che CargoService reagisca <em>immediatamente</em> (anche se sta attendendo altre risposte o se il robot è in movimento), l&#x27;architettura sfrutta le transizioni di interruzione <code>whenInterruptEvent</code>. Questo meccanismo permette di interrompere il flusso normale in qualsiasi momento, portando istantaneamente il sistema in stato di <code>outOfService</code>. In questo caso il sistema dovrà rispondere ad ogni richiesta con <code>loadRejected</code> .</li></ul><p id="3984730f-99ce-804c-ba01-cf4487a501b9" class="" dir="auto">Si formalizzano i messaggi definiti in precedenza come segue:</p><pre id="3934730f-99ce-80b1-85e0-c65c9a5664bf" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Event    containerDetected : containerDetected(X) &quot;Emesso se D &lt; DFREE/2 per 3s&quot;
+Event    sensorAlarm       : sensorAlarm(X)       &quot;Emesso se D &gt; DFREE per 3s&quot;
+Event    timeOut           : timeOut(X)           &quot;Scadenza regola dei 30 secondi&quot;</code></pre><h3 id="3924730f-99ce-800f-bcc9-fc86c6ca0517" class="" dir="auto">La marcatura in Slot5</h3><p id="3924730f-99ce-80a7-aad1-db9f8bd94b6e" class="" dir="auto">Il requisito <em>&quot;durante lo stoccaggio temporaneo, un dispositivo &#x27;marker&#x27; etichetta il container [...] e segnala quando questa attività è completata&quot;</em> viene, come già indicato nei requisiti dello Sprint0, semplificato in un ritardo temporizzato. Questo si traduce in uno stato dedicato <code>markingSlot5</code> con una delay, che separa concettualmente la fase di trasporto (verso slot5) dalla fase di marcatura, in modo che l&#x27;una possa evolvere indipendentemente dall&#x27;altra in Sprint successivi (ad esempio se si volesse, in futuro, sostituire il ritardo fisso con un vero segnale del marcatore).</p><h3 id="3924730f-99ce-8079-a8a9-dddaf2a44786" class="" dir="auto">Il LED </h3><p id="3924730f-99ce-80d9-b959-da6d067acb79" class="" dir="auto">Il CargoService deve presentare un messaggio per poter iniziare o interrompere il LED fisico sul PicoW. Il modo più naturale per formalizzare il messaggio diretto verso il PicoW è attraverso una coppia di messaggi di <code>dispatch startBlink/stopBlink</code>. L’utilizzo di dispatch permette di inviare un messaggio direttamente al LED, senza bloccare l’esecuzione di CargoService. Il messaggio <code>startBlink</code> viene inviato da CargoService quando entra nello stato <code>engaged</code> per avviare il lampeggio del LED , successivamente viene inviato <code>stopBlink</code> per terminare il lampeggio dello stesso, quando torna in stato disengaged. Si formalizzano i dispatch come segue:</p><pre id="3934730f-99ce-80c1-8c0f-c4100ff410bd" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">//gestione LED
+Dispatch startBlink : startBlink(X)				&quot;Gestione accensione blink LED&quot;
+Dispatch stopBlink : stopBlink(X)				&quot;Gestione spegnimento blink LED&quot;</code></pre><p id="3924730f-99ce-802f-8a44-c3c471690543" class="" dir="auto">Si introduce inoltre, per lo stesso motivo di disaccoppiamento, il placeholder <strong>LEDMock</strong>: il requisito prevede che il Led lampeggi quando il sistema è engaged, ma la sua realizzazione fisica sul PicoW è pianificata per lo Sprint 2. Definire già ora il contratto di messaggi verso un attore dedicato (anche se in questo Sprint tale attore si limita a un log) evita che l&#x27;introduzione del Led fisico richieda, in futuro, modifiche a CargoService.</p><p id="3924730f-99ce-80f9-8b00-dcca718c8ec4" class="" dir="auto">Nell’interazione effettiva con il picoW per far iniziare o bloccare il lampeggio del LED fisico, dovranno essere inviati messaggi che possiamo formalizzare attraverso la seguente stringa JSON</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" integrity="sha512-QXFMVAusM85vUYDaNgcYeU3rzSlc+bTV4JvkfJhjxSHlQEo+ig53BtnGkvFTiNJh8D+wv6uWAQ2vJaVmxe8d3w==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3924730f-99ce-8081-90d1-e12990d9470b" class="code code-wrap" data-notion-code-syntax="json"><code class="language-json" style="white-space:pre-wrap;word-break:break-all">{ &quot;blink&quot;: ACTIVE }
+ACTIVE    ::= true | false</code></pre><h3 id="3924730f-99ce-80eb-b566-eeb56906dda4" class="" dir="auto">IOPort</h3><p id="3924730f-99ce-80d9-8e17-e2b73fb6c0b8" class="" dir="auto">IOPort come già detto viene realizzato in questa fase come QActor nello stesso contesto di CargoService, e si limita pertanto a produrre/consumare esattamente i messaggi di interfaccia definiti, senza alcuna logica applicativa reale (nessuna Web GUI). Tuttavia, al fine di favorire lo sviluppo dei test e per avere una visione più completa del sistema, verso lo sviluppo di una webgui reale, in modo da non dover modificare radicalmente il codice relativo al QActor IOPort, se ne specificano ulteriormente le modalità di interazione.</p><p id="3924730f-99ce-80c5-946c-fcfaf17b0025" class="" dir="auto">Per la comunicazione tra WebGUI e IOPort si è scelto di utilizzare il protocollo Websocket, in quanto permette di ricevere dati non appena sono pronti senza sovraccaricare il sistema. Questa scelta è necessaria in quanto CargoService può emettere eventi in modo proattivo (e.g. <code>timeout</code>, <code>loadEnded</code> o <code>sensorAlarm</code>) che devono aggiornare lo stato del sistema (e quindi la GUI stessa) in tempo reale.</p><p id="3924730f-99ce-80d2-bc10-ce1f8ebfa1c7" class="" dir="auto">Una volta che CargoService ha inviato messaggi al modello QAK di IOPort, i messaggi scambiati tramite WebSocket tra IOPort e WebGUI sono definiti con la seguente sintassi JSON:</p><pre id="3924730f-99ce-80cd-b06a-fd28a0fb4fb5" class="code code-wrap" data-notion-code-syntax="json"><code class="language-json" style="white-space:pre-wrap;word-break:break-all">{ &quot;type&quot;: TYPE, &quot;payload&quot;: PAYLOAD }
+
+TYPE    ::= &quot;updateState&quot;
+PAYLOAD ::= stateInfo
+
+stateInfo ::= { &quot;state&quot;: STATE, &quot;message&quot;: MSG }
+STATE     ::= disengaged | engaged | outofservice | slot
+MSG       ::= string</code></pre><p id="3924730f-99ce-8079-b009-d90834206db0" class="" dir="auto">Viceversa, i messaggi tra WebGUI e IOPort (ossia il solo comando del bottone premuto), sono definiti come segue:</p><pre id="3924730f-99ce-80e9-ac1f-ddaa6180c1cc" class="code code-wrap" data-notion-code-syntax="json"><code class="language-json" style="white-space:pre-wrap;word-break:break-all">{ &quot;type&quot;: &quot;buttonPressed&quot; }</code></pre><p id="3924730f-99ce-8032-b1bf-e29cf0b5bf6d" class="" dir="auto">Questo messaggio arriva al guiserver via WebSocket. Il guiserver deve trasformarlo in un messaggio QAK e inviarlo al QActor IOPort. Questo può portare a definire un <code>dispatch buttonPressed</code> , che una volta rilevato da IOPort, viene girato come una Request <em><code>loadRequest</code></em> a CargoService che provvederà a verificare la disponibilità di Slot. La risposta di CargoService al QActor IOPort, potrà eventualmente aggiornare lo stato presentato sul Display della Web GUI, passando nuovamente prima per il guiserver ed infine modificando di fatto la pagina Web. Il messaggio buttonPressed può essere formalizzato come segue:</p><pre id="3934730f-99ce-8030-bdb6-e75a8a4fe0c8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Dispatch buttonPressed : buttonPressed(X)		&quot;Richiesta di carico da parte di un utente&quot;</code></pre><p id="3934730f-99ce-8052-a68e-d4c33a3ab50b" class="" dir="auto">In questa fase tuttavia, ci si limita ad implementare il comportamento locale di IOPort nell’iterazione con il CargoService, non considerando la comunicazione tra WEBGui e guiserver, frutto invece di analisi successive.</p><h3 id="3924730f-99ce-808c-b694-f7519aff0ed9" class="" dir="auto"><strong>Sensor</strong></h3><p id="3924730f-99ce-80a1-8f8e-d9fab1e935ab" class="" dir="auto">Analogamente ad IOPort, in questa fase Sensor è implementato come mock all’interno del sistema. Il suo scopo è quindi validare la reattività del sistema senza dipendere dal sensore reale, limitandosi a produrre i messaggi di interfaccia definiti di seguito.</p><p id="3924730f-99ce-800b-a337-c37d0b4b5297" class="" dir="auto">Tuttavia, per predisporre l&#x27;architettura alla futura integrazione con il dispositivo fisico, si formalizzano i dati in ingresso simulando i messaggi che un ipotetico sensor emetterebbe ad ogni misurazione, utilizzando stringhe con payload JSON:</p><pre id="3924730f-99ce-8066-adb6-ea57081e37ce" class="code code-wrap" data-notion-code-syntax="json"><code class="language-json" style="white-space:pre-wrap;word-break:break-all">{&quot;sensorName&quot;: &quot;&lt;sensorName&gt;&quot;, &quot;distance&quot;: &lt;int&gt; }</code></pre><p id="3924730f-99ce-80d6-9b46-ce3cad39bb69" class="" dir="auto">Il QActor Sensor, configurato con la distanza di riferimento DFREE, una volta ricevuto un messaggio con il payload descritto, dovrà verificare tutte le condizioni specificate nei requisiti, producendo i seguenti eventi:</p><pre id="3924730f-99ce-8040-b70f-ed21141c6460" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">Event    containerDetected : containerDetected(X) &quot;Emesso se D &lt; DFREE/2 per 3s&quot;
+Event    sensorAlarm       : sensorAlarm(X)       &quot;Emesso se D &gt; DFREE per 3s&quot;</code></pre><p id="3984730f-99ce-808c-bcf1-f5fcaa1ede04" class="" dir="auto">In questa fase il QActor Sensor viene simulato nella sua capacità di rilevare la presenza di un container nella sensor area. In particolare è stato scelto di far inviare al QActor Sensor l’evento <code>startSensorRecording</code> quando inizia il timer di 30 secondi per il deposito del container da parte dell’utente. Questo evento scatena a sua volta un timer che simula il tempo in cui l’utente deposita effettivamente il carico nella sensor area, al termine del quale viene emesso l’evento <code>containerDetected</code> .</p><h1 id="3904730f-99ce-8072-9b90-fa056f7716a6" class="" dir="auto">Test Plan</h1><p id="3904730f-99ce-8059-8564-ecbe0f8b44dc" class="" dir="auto">Test del comportamento atteso da Hold</p><pre id="3904730f-99ce-80bb-b55f-f8430b0afe37" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public class TestHold {
+
+    private Hold hold;
+    private Coord c1, c2, c3, c4, c5, cIoPort;
+    private Slot slot1, slot2, slot3, slot4;
+
+    @Before
+    public void setUp() {
+        // Inizializziamo la Hold reale
+        hold = new Hold(10, 10);
+
+        // Definiamo le coordinate reali usando Hold.Coord
+        c1 = new Coord(0, 0);
+        c2 = new Coord(0, 1);
+        c3 = new Coord(1, 0);
+        c4 = new Coord(1, 1);
+        c5 = new Coord(2, 2); // Lo slot 5 speciale
+        cIoPort = new Coord(5, 5);
+
+        // Impostiamo le coordinate speciali nella hold
+        hold.setSlot5(c5);
+        hold.setIoport(cIoPort);
+
+        // Creiamo gli oggetti Slot reali
+        slot1 = new Slot(&quot;Slot1&quot;);
+        slot2 = new Slot(&quot;Slot2&quot;);
+        slot3 = new Slot(&quot;Slot3&quot;);
+        slot4 = new Slot(&quot;Slot4&quot;);
+        
+        // Popoliamo la mappa della griglia
+        hold.addSlot(c1, slot1);
+        hold.addSlot(c2, slot2);
+        hold.addSlot(c3, slot3);
+        hold.addSlot(c4, slot4);
+    }
+
+    @Test
+    public void testGetIoPortEGetSlot5() {
+        // Verifica che i getter delle coordinate speciali funzionino
+        assertEquals(cIoPort, hold.getIoPort());
+        assertEquals(c5, hold.getSlot5());
+    }
+
+    @Test
+    public void testIsFullQuandoVuota() {
+        // Creiamo una nuova hold vuota senza slot per testare il caso limite iniziale
+        Hold emptyHold = new Hold(10, 10);
+        assertFalse(emptyHold.isFull());
+    }
+
+    @Test
+    public void testGetSlotCoord() {
+        // Verifica del caso di ricerca corretta della coordinata
+        assertEquals(c1, hold.getSlotCoord(slot1));
+        
+        // Verifica del caso di slot inesistente
+        assertNull(hold.getSlotCoord(new Slot(&quot;Inesistente&quot;)));
+    }
+
+    @Test
+    public void testFindFreeSlot() {
+        // Svuotiamo tutti gli slot per sicurezza
+        hold.clearAllSlots();
+        ISlot libero = hold.findFreeSlot();
+        assertNotNull(libero);
+        assertEquals(&quot;Slot1&quot;, libero.getName());
+    }
+    
+    @Test
+    public void testIsFullQuandoTuttiGliSlotSonoOccupati() {
+        // All&#x27;inizio sono tutti liberi, quindi isFull() deve essere false
+        hold.clearAllSlots();
+        assertFalse(hold.isFull());
+
+        // Occupiamo gli slot da 1 a 4
+        slot1.putContainer();
+        slot2.putContainer();
+        slot3.putContainer();
+        slot4.putContainer();
+        
+        // Ora tutti gli slot rilevanti (1-4) sono occupati -&gt; deve restituire true
+        assertTrue(hold.isFull());
+    }
+
+    @Test
+    public void testFindFreeSlotRestituisceSlot2SeSlot1EAltroveOccupato() {
+        // Situazione iniziale: tutti liberi
+        hold.clearAllSlots();
+        
+        // Occupiamo volutamente lo slot1
+        slot1.putContainer();
+
+        // Chiediamo il primo slot libero (se hai aggiunto .sorted() in findFreeSlot, restituirà Slot2)
+        ISlot libero = hold.findFreeSlot();
+
+        // Verifichiamo che lo slot trovato sia precisamente lo slot2
+        assertNotNull(libero);
+        assertEquals(&quot;Slot2&quot;, libero.getName());
+        assertFalse(libero.isOccupato());
+    }
+}</code></pre><p id="3904730f-99ce-80e3-be1d-e230a60e5f09" class="" dir="auto">Test del comportamento atteso da Slot</p><pre id="3904730f-99ce-807f-8ff7-fed69f5e1e7d" class="code code-wrap" data-notion-code-syntax="java"><code class="language-java" style="white-space:pre-wrap;word-break:break-all">public class TestSlot {
+
+    private ISlot slot;
+
+    @Before
+    public void setUp() {
+        // Inizializziamo lo slot prima di ogni test
+        System.out.println(&quot;Slot setup&quot;);
+        slot = new Slot(&quot;Slot1&quot;);
+    }
+
+    @Test
+    public void testGetName() {
+        // Verifica che il nome inserito nel costruttore sia corretto
+        assertEquals(&quot;Slot1&quot;, slot.getName());
+    }
+
+    @Test
+    public void testStatoIniziale() {
+        // Verifica che uno slot appena creato non sia occupato
+        assertFalse(slot.isOccupato());
+    }
+
+    @Test
+    public void testPutContainer() {
+        // Eseguiamo l&#x27;inserimento
+        slot.putContainer();
+        
+        // Verifica che lo stato sia cambiato in &#x27;true&#x27;
+        assertTrue(slot.isOccupato());
+    }
+
+    @Test
+    public void testRemoveContainer() {
+        // Mettiamo prima un container nello slot per riempirlo
+        slot.putContainer();
+        assertTrue(slot.isOccupato());
+
+        // Rimuoviamo il container
+        slot.removeContainer();
+
+        // Verifica che lo stato sia tornato &#x27;false&#x27;
+        assertFalse(slot.isOccupato());
+    }
+}</code></pre><p id="3984730f-99ce-80f2-8159-d4347092ec01" class="" dir="auto">Per la formalizzazione dei test funzionali che specificano il comportamento atteso dal sistema si verifichino i test funzionali, analizzati nello <a href="https://gregoriobussolari.github.io/CargoSystemIdss26/chronicle/Sprint0Docs/Sprint0.html">sprint 0</a>.</p><h1 id="3904730f-99ce-80bb-8170-fac857ebc626" class="" dir="auto">Progetto</h1><p id="3984730f-99ce-80a0-9c05-d9d96d47b4b9" class="" dir="auto">La struttura interna delle entità di dominio <code><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/domain/Hold.java">Hold</a></code> e <code><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/domain/Slot.java">Slot</a></code>  implementati rispettivamente come POJO, viene inizializzata come specificato in analisi del problema all&#x27;avvio del sistema tramite un file di configurazione esterno (<code><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/properties.txt">properties.txt</a></code>). Questo approccio disaccoppia la geometria della stiva dal codice sorgente, delegando il parsing a un metodo factory apposito.</p><p id="3984730f-99ce-801f-8611-ca138749d452" class="" dir="auto">In ottemperanza con quanto specificato nelle fasi precedenti, si presenta il codice al<code> </code><code><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/cargosystem26.qak">modello QAK</a></code>, che specifica interamente il core business richiesto.</p><p id="3984730f-99ce-8016-970a-ee5cdb9c0d0b" class="" dir="auto">Il modello QAK presentato per CargoService, segue questo comportamento a stati, così schematizzato:</p><pre id="3984730f-99ce-80f6-9ebc-fd0b1d13548a" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">[whenRequest loadRequest]
+idle ─────────────────────────────► handleLoadRequest
+ ▲                                        │
+ │                                        │ (guardie: hold piena? / engaged? / slot libero?)
+ │                    ┌───────────────────┼────────────────────┐
+ │                    ▼                   ▼                    ▼
+ │              loadRejected         retryLater          loadEngaged + startBlink
+ │              (torna idle)        (torna idle)               │
+ │                                                             ▼
+ │                                                      waitingContainer
+ │                                                ┌────────────┴────────────┐
+ │                                 [whenTime 30000]                         [whenEvent containerDetected]
+ │                                                │                         │
+ │                                                ▼                         ▼
+ │                                      handleTimeoutExpired      startMoveToSensorArea
+ │                                      stopBlink, timeOut                  │
+ │                                                │                         │ [whenReply moverobotdone]
+ │                                                ▼                         ▼
+ │                                              idle               startMoveToSlot5
+ │                                                                          │
+ │                                                                          │ [whenReply moverobotdone]
+ │                                                                          ▼
+ │                                                                     markingSlot5 (delay)
+ │                                                                          │
+ │                                                                          │ [whenReply moverobotdone]
+ │                                                                          ▼
+ └───────── loadEnded, stopBlink ◄─────── handleDepositSuccess ◄──── startMoveToSlot</code></pre><p id="3984730f-99ce-80a3-a98c-c0727fecf7bd" class="" dir="auto">(Nota: da qualsiasi stato in cui il robot è in movimento, la ricezione di <code>moverobotfailed</code> instrada il flusso verso <code>handleDepositFailed</code>, che ripristina lo stato e torna in idle. Parimenti, l&#x27;evento <code>sensorAlarm</code> interrompe l&#x27;esecuzione portando il sistema in <code>outOfService</code>)</p><h3 id="3984730f-99ce-8055-9d5c-d4d807df7c26" class="" dir="auto">Dettagli implementativi CargoService</h3><p id="3984730f-99ce-80bb-9e2a-fb5fe22fb6a8" class="" dir="auto">All&#x27;avvio, l&#x27;attore CargoService istanzia la Hold mediante l’apposito metodo factory esposto dalla classe Hold.</p><p id="3984730f-99ce-8088-8faf-de23cfd79398" class="" dir="auto">A differenza di una prima bozza in cui CargoService teneva uno stato di occupazione <em>simulato</em> in parallelo (contatore num_empty_slot) senza mai interrogare realmente l&#x27;oggetto <code>hold</code>, in questa versione l&#x27;FSM richiama direttamente <code>hold.findFreeSlot()</code>, <code>hold.isFull()</code>, <code>hold.getSlotCoord(slot)</code> e <code>hold.getSlot5().</code>Questo evita la duplicazione di stato fra il modello <code>Hold</code>/<code>Slot</code> (accuratamente testato in <code>TestHold</code>/<code>TestSlot</code>) e la logica dell&#x27;orchestratore, che altrimenti resterebbero disallineati.</p><p id="3984730f-99ce-8092-8ddc-edc13f82986d" class="" dir="auto"><strong>Tipo del payload di loadEngaged:</strong> Nello Sprint 0 il messaggio trasportava un intero (es. <code>loadEngaged(1)</code>), mentre in questo sprint il payload diventa una stringa (<code>loadEngaged(&quot;Slot1&quot;)</code>) per riflettere l&#x27;introduzione formale dell&#x27;entità <code>Slot</code> dotata di nome. È un raffinamento del contratto rispetto allo Sprint 0, tracciato per coerenza.</p><h4 id="3984730f-99ce-803f-9ac2-c4efa7b042dc" class="" dir="auto">Funzionamento:</h4><p id="3984730f-99ce-807c-8c3e-ef61c66d2f8c" class="" dir="auto">Durante il ciclo di vita di CargoService in seguito alla ricezione di una richiesta, il coordinamento delle deleghe verso <code>robotsmart26</code> avviene mediante passaggi di coordinate espliciti estratti dal dominio Java nel blocco Kotlin dell&#x27;attore:</p><ol type="1" id="3984730f-99ce-80ad-9dae-e9ce67d82818" class="numbered-list" start="1" dir="auto"><li><strong>Fase di Input (IOPort)</strong>: All&#x27;arrivo di <code>containerDetected</code>, l&#x27;attore interroga <code>hold.getIoPort()</code> per ottenere le coordinate della Sensor Area, per poi inviare a RobotSmart26 la seguente request:</li></ol><pre id="3984730f-99ce-804c-b458-e70ca2b0f882" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">request robotsmart -m moverobot : moverobot($SensorAreaX, $SensorAreaY, $StepTime)</code></pre><ol type="1" id="3984730f-99ce-803e-b102-dbb11ca998da" class="numbered-list" start="2" dir="auto"><li><strong>Fase di Marking (Slot 5)</strong>: Raccolto il container, il target viene aggiornato mediante <code>hold.getSlot5()</code>, generando la richiesta:</li></ol><pre id="3984730f-99ce-809c-8b7c-db55d313f0a8" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">request robotsmart -m moverobot : moverobot($Slot5X, $Slot5Y, $StepTime)</code></pre><ol type="1" id="3984730f-99ce-80b7-8f20-fb7a72192077" class="numbered-list" start="3" dir="auto"><li><strong>Fase di Stoccaggio (Slot Target)</strong>: Una volta etichettato il container, viene invocata la funzione di inversione <code>hold.getSlotCoord(SlotTarget)</code> per ottenere le coordinate specifiche (es. <code>1,1</code> per lo <code>Slot1</code>), inoltrando l&#x27;ultima richiesta di movimento. Al termine, viene aggiornato lo stato interno dello slot tramite <code>SlotTarget.putContainer()</code>.</li></ol><pre id="3984730f-99ce-80cd-8f3c-f11b6622efd4" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">request robotsmart -m moverobot : moverobot($TargetX, $TargetY, $StepTime)</code></pre><p id="3984730f-99ce-80cc-82b6-e49375b0b090" class="" dir="auto">Si specifica che l&#x27;aggiornamento dello stato logico della <em>Hold</em> (ovvero la marcatura di uno slot come &#x27;occupato&#x27;) avviene esclusivamente quando il container è stato fisicamente depositato nello slot di destinazione. Questo previene inconsistenze nel sistema in caso di guasti o interruzioni durante il tragitto del robot. Infatti in questo caso la richiesta pendente viene persa e lo stato degli slot deve rimanere invariato. </p><h4 id="3984730f-99ce-8099-a3e6-d544861b1f1e" class="" dir="auto">Interazione con Led</h4><p id="3984730f-99ce-8025-8992-c513b7d17bf1" class="" dir="auto">L’interazione con il mock del led avviene tramite i messaggi di <code>Dispatch startBlink(X)/stopBlink(X)</code>. </p><p id="3984730f-99ce-8024-a724-f47af3ad155a" class="" dir="auto">In particolare, l’invio del messaggio di accensione </p><pre id="3984730f-99ce-806e-a640-fd51bb3cd89e" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">forward led -m startBlink : startBlink(0)</code></pre><p id="3984730f-99ce-80df-916f-df47311ca870" class="" dir="auto">avviene nello stato del QActor <code>handleLoadRequest</code> dopo la ricezione di una richiesta di carico con il sistema in stato <code>disengaged</code> e con degli Slot disponibili.</p><p id="3984730f-99ce-80d4-8089-fbc4abcd1d25" class="" dir="auto">Viceversa, negli stati <code>handleTimeoutExpired</code>, <code>handleDepositSuccess</code>, <code>handleDepositFailed</code> e <code>outOfService</code>, ossia gli stati in cui lo stato del sistema termina di essere <code>engaged</code>, si ha l’invio da parte di CargoServie del messaggio di spegnimento del led</p><pre id="3984730f-99ce-805e-b069-cf8505b6eb73" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">forward led -m stopBlink : stopBlink(0) </code></pre><h4 id="3984730f-99ce-8040-aabb-db6ba503f05c" class="" dir="auto">Interazione con Sensor</h4><p id="3984730f-99ce-808f-9b64-e30220900b63" class="" dir="auto">L’interazione con il mock del sensore è duplice, in particolare viene inviato al sensore, da parte del CargoService, l’evento di inizio attesa del container, utilizzato per simulare l’arrivo del container.</p><pre id="3984730f-99ce-80ff-b3c9-ddebd9eabb00" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">emit startSensorRecording : startSensortRecording(1)		 </code></pre><p id="3984730f-99ce-80d4-b557-c03cfb3aa4ef" class="" dir="auto">Il sensore invece invia al CargoService il messaggio di arrivo del container all’interno della IOPort.</p><pre id="3984730f-99ce-80d7-bec0-c5bbe79b89c3" class="code code-wrap" data-notion-code-syntax="kotlin"><code class="language-kotlin" style="white-space:pre-wrap;word-break:break-all">emit containerDetected : containerDetected(1)</code></pre><h4 id="3984730f-99ce-8004-beff-d7a0d2e02b2b" class="" dir="auto">Il problema della Request:</h4><p id="3984730f-99ce-8082-a28f-c3e341e35d67" class="" dir="auto">Gli stati e il flusso finora descritti rappresentano il funzionamento base. Tuttavia l&#x27;architettura dell&#x27;orchestratore <code>CargoService</code> è stata specificamente progettata per risolvere il problema della concorrenza intrinseca nelle richieste di carico (<code>loadRequest</code>).</p><p id="3984730f-99ce-80e5-8ae7-f6cc562815ec" class="" dir="auto">Se un secondo operatore preme il pulsante mentre il sistema è già impegnato a gestire un container (e quindi non si trova nello stato idle ), una gestione ingenua metterebbe in coda la nuova <code>loadRequest</code>, bloccando l&#x27;interfaccia utente del client per un tempo indefinito e non ci sarebbe una gestione corretta della risposta <code>retryLater</code></p><p id="3984730f-99ce-8087-8127-c7bab4040cfb" class="" dir="auto">Si gestiscono così 2 casi particolari:</p><ol type="1" id="3984730f-99ce-80a0-b6e0-d83e933a88b0" class="numbered-list" start="1" dir="auto"><li><strong>Gestione asincrona dei delay (Fase Waiting/Marking):</strong> Durante le attese temporizzate, eventuali richieste concorrenti vengono intercettate per inviare <code>retryLater</code>. L&#x27;attore ricalcola dinamicamente il tempo residuo (<code>RemainingMs</code>) e riprende l&#x27;attesa senza sfasare il timeout originale.</li></ol><ol type="1" id="3984730f-99ce-80eb-a6a5-f28cbb88e3c7" class="numbered-list" start="2" dir="auto"><li><strong>Continuità durante i movimenti (Interazione DDR):</strong> Mentre si attende l&#x27;esito del movimento da <code>RobotSmart26</code>, appositi stati intermedi intercettano le nuove richieste inviando <code>retryLater</code>, per poi rimettersi in ascolto del robot senza corrompere il task logistico in corso.</li></ol><p id="3984730f-99ce-80f9-b473-ce8428342bec" class="" dir="auto">Questo design assicura che CargoService mantenga sempre la coerenza del processo logistico principale, fornendo al contempo feedback istantanei a tutti i client periferici, indipendentemente dallo stato di avanzamento del task in corso. Il tradeoff è la complessità maggiore del codice scritto.</p><h1 id="3904730f-99ce-80ee-adc6-c8b6fee8bf63" class="" dir="auto">Testing</h1><p id="3984730f-99ce-80f3-9314-d2d2fb1b0c9f" class="" dir="auto">Per testare il CargoService nella gestione delle richieste effetttuate da un utente che preme il pulsante, in completo isolamento dalla logica del guiserver che rappresenterà IOPort, sono state realizzare delle classi java che simulano il comportamento di un utente che interagisce con il sistema. Sono state considerate le casistiche:</p><ul id="3984730f-99ce-80cf-86df-ea64f7d6a570" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/client/UserButtonPressedClient.java">una sola richiesta accettata quando la Hold è libera.</a> Risultato atteso: slot 1 occupato.</li></ul><ul id="3984730f-99ce-8057-98ac-de953c706f3f" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/client/MultipleUserButtonPressedClient.java">Richieste multiple intervallate da un certo tempo quando il sistema è engaged.</a> Risultato atteso: ingresso nello stato engaged dopo la prima richiesta e richieste ricevute rifiutate con <code>retryLater</code>.</li></ul><ul id="3984730f-99ce-8024-a2d3-e5802c5ea022" class="bulleted-list" dir="auto"><li style="list-style-type:disc"><a href="https://github.com/GregorioBussolari/CargoSystemIdss26/blob/main/sprint1/CargoSystem26/src/client/MultipleUserButtonPressedClientUntillFull.java">5 richieste inviate di seguito fino al riempimento della Hold</a>. Risultato atteso: 5 richieste accettate e di conseguenza 4 slot occupati; ultima richiesta rifiutata a causa della Hold satura.</li></ul><p id="3984730f-99ce-8061-9638-c9abf58a36d7" class="" dir="auto">In questa fase pertanto la classe java stabilisce una connessione TCP con ctxcargosystem alla porta 8120, andando poi a fare forward del messaggio di dispatch buttonPressed. Quando il QActor IOPort si trova disponibile per accettare una richiesta di questo tipo, provvederà ad inviare la loadRequest a CargoService.</p><p id="3984730f-99ce-801c-9cf5-fdec6d8b91a2" class="" dir="auto">Inoltre in ottemperanza al concetto di Interaction nel documento di riferimento, la frase che fissa la connessione è l’unica che cambia al variare del protocolo di comunicazione, permettendo l’isolamento completo del sistema in questa fase di testing.</p><p id="3984730f-99ce-80ae-9bb0-e67ab7bb7f3e" class="" dir="auto">In questa fase essendo stato realizzato il sensore come Mock in QAk, il rilevamento del container viene gestito in modo coerente solo lato CargoService. Per i test eseguiti pertanto, viene simulato con un delay l’intervallo di tempo in cui ci si aspetta di ricevere dal QActor Sensor il messaggio containerDetected. Se questo timer rientra nei 30 secondi, siamo nel caso load Accepted, altrimenti lo stato torna disengaged. Per testare la casistica in cui il carico non venga depositato in tempo, si modifica direttamente questo intervallo di tempo.</p><p id="3984730f-99ce-8002-b592-c1dbc11ce89f" class="" dir="auto">In questa fase sebbene siano stati formalizzati gli stati del sistema <code>outofservice</code> , si delega il testing del comportamento allo sprint in cui viene realizzato il Sensore effettivo.</p><h1 id="3904730f-99ce-8049-b8ad-d447ab857ba8" class="" dir="auto"><strong>Deployment</strong></h1><p id="3904730f-99ce-8081-b97b-e5a88120e588" class="" dir="auto">Per questo sprint il deployment è limitato a un singolo ambiente di sviluppo/test, dato che IOPort e Sensor restano mock collocati nello stesso contesto di CargoService (<code>ctxcargosystem</code>):</p><ol type="1" id="3984730f-99ce-80d2-b241-c9452c7a0b8d" class="numbered-list" start="1" dir="auto"><li>Avviare il servizio <code>robotsmart26</code> fornito dal committente in un nodo separato (<code>ctxrobotservice26</code>, porta 8020), precaricato con la mappa della Hold in formato stringa (0000001@0011001@...). Tale nodo viene avviato come container Docker, attraverso il relativo file di configurazione yaml,</li></ol><ol type="1" id="3984730f-99ce-8031-9bae-c28f3a8daec5" class="numbered-list" start="2" dir="auto"><li>Avviare il sistema <code>cargosystem</code> (QActor <code>cargoservice</code>, <code>ioport</code>, <code>sensor</code>, <code>led</code> nel contesto <code>ctxcargosystem</code>, porta 8120), che all&#x27;avvio costruisce la Hold leggendo il file di configurazione con le coordinate di ostacolo/deposito di ciascuno slot. Nessuna dipendenza da hardware fisico (PicoW, sonar, LED reale) è richiesta in questo sprint: tutte le interazioni con essi sono mock, in coerenza con il goal ristretto dello sprint.</li></ol><ol type="1" id="3984730f-99ce-80b1-b427-f4afc261d981" class="numbered-list" start="3" dir="auto"><li>Per simulare l’interazione con la IOPort nelle varie casistiche di pressione del pulsante, facendo di fatto avviare la gestione di una richiesta da parte del sistema, avviare i client java creati e discussi in fase di Testing, solo dopo aver seguito i passi precedenti.</li></ol><h1 id="3904730f-99ce-80df-b83e-cc8625926ed4" class="" dir="auto"><strong>Maintenance</strong></h1><ul id="3904730f-99ce-80d4-999d-e61d4850e20f" class="bulleted-list" dir="auto"><li style="list-style-type:disc">I contratti di messaggio verso i componenti non ancora reali (<code>startBlink</code>/<code>stopBlink</code> verso il LED, <code>buttonPressed</code> verso IOPort, i messaggi JSON verso Sensor) sono stati fissati fin da ora per evitare, negli sprint successivi, di dover modificare CargoService quando i mock verranno sostituiti da implementazioni reali (Sprint 2 per IOPort/LED, Sprint 3 per Sensor).</li></ul><ul id="3984730f-99ce-8007-9328-da6158001dc8" class="bulleted-list" dir="auto"><li style="list-style-type:disc">Punti aperti da rivalutare in Sprint 2/3:<ul id="3984730f-99ce-801a-a050-e8fd27e3ad9e" class="bulleted-list" dir="auto"><li style="list-style-type:circle">politica di fallimento in caso di mancata consegna del container nei tempi previsti, nella modalità in cui è il sensore stesso ad avvertire la presenza del container in sensor area, gestendo in modo coerente il caso in cui i tempi non vengano rispettati. </li></ul><ul id="3984730f-99ce-801a-aff1-e051fb3cce15" class="bulleted-list" dir="auto"><li style="list-style-type:circle">gestione corretta della situazione <code>outofservice</code> in base alle rilevazioni del sensore e del relativo <code>endOOS</code> al termine del disservizio</li></ul><ul id="3984730f-99ce-8005-adbe-cc4379b7064c" class="bulleted-list" dir="auto"><li style="list-style-type:circle">i messaggi di display richiesti dal committente (<code>Service working</code>/<code>Out of service</code>) restano non implementati fino alla WebGUI reale di Sprint 2.</li></ul><ul id="3984730f-99ce-8062-9b24-c924be1c1588" class="bulleted-list" dir="auto"><li style="list-style-type:circle">Gestione del blinking del led reale quando il sistema è engaged, con messaggi diretti al PicoW e non come placeholder QActor Led.</li></ul></li></ul><p id="3904730f-99ce-8053-9b41-def80af7abe0" class="" dir="auto">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
