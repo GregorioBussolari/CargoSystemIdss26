@@ -1,5 +1,7 @@
 package domain;
 
+import domain.Hold.Coord;
+
 public interface IHold {
 	 //primtive 
   boolean isFull();                 //True se la hold non ha più slot liberi
@@ -8,4 +10,5 @@ public interface IHold {
   Hold.Coord getSlotCoord(ISlot slot);         //Restituisce posizione di un dato slot
   Hold.Coord getSlot5();                 //Restituisce posizione slot 5
   Hold.Coord getIoPort();        //Restituisce posizione IOPort
+  ISlot getSlot(String name);  
 }

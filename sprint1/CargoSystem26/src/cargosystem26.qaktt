@@ -113,6 +113,7 @@ QActor cargoservice context ctxcargosystem
 		whenEvent containerDetected -> handleContainerDetected
 		//Allarme out of service
 		whenInterruptEvent sensorAlarm -> handleAlarm
+		
 	
 	State handleTimeoutExpired {
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red

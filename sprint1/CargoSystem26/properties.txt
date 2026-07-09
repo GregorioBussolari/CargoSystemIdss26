@@ -10,12 +10,9 @@ coord.slot5=2,5
 # Posizioni di attracco/scarico per gli slot da 1 a 4
 # Slot 1 (Ostacolo in 2,1 -> Scarico a sinistra in 1,1)
 coord.slot1=1,1
-
 # Slot 2 (Ostacolo in 3,1 -> Scarico a destra in 4,1)
 coord.slot2=1,4
-
 # Slot 3 (Ostacolo in 2,3 -> Scarico a sinistra in 1,3)
 coord.slot3=3,1
-
 # Slot 4 (Ostacolo in 3,3 -> Scarico a destra in 4,3)
 coord.slot4=3,4

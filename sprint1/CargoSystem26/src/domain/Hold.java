@@ -182,6 +182,7 @@ public static class Coord {
 	    return new Coord(x, y);
 	}
 	
+	@Override
 	public ISlot getSlot(String name) {
 	    if (name == null || gridSlots.isEmpty()) {
 	        return null;
