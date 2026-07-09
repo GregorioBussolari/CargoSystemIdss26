@@ -33,7 +33,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name | starts - Interfaccia Utente Disponibile")
+						CommUtils.outmagenta("$name | starts - Interfaccia Utente Disponibile")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -43,14 +43,14 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("running") { //this:State
 					action { //it:State
-						CommUtils.outblue("$name | In attesa di un utente che prema il pulsante per iniziare")
+						CommUtils.outmagenta("$name | In attesa di un utente che prema il pulsante per iniziare")
 						 Num ++  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t015",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					 transition(edgeName="t034",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
@@ -61,9 +61,9 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t016",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t017",targetState="handleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t018",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition(edgeName="t035",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t036",targetState="handleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t037",targetState="handleRetry",cond=whenReply("retryLater"))
 				}	 
 				state("handleEngaged") { //this:State
 					action { //it:State

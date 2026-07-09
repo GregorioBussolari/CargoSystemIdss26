@@ -34,13 +34,14 @@ with Diagram('cargosystemArch', show=False, outformat='png', graph_attr=graphatt
           robotsmart=Custom('robotsmart(ext)','./qakicons/externalQActor.png')
      cargoservice >> Edge( label='startSensorRecording', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='containerDetected', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
-     cargoservice >> Edge( label='timeOut', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='sensorAlarm', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
+     cargoservice >> Edge( label='timeOut', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      cargoservice >> Edge( label='loadEnded', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='endOOS', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
      sys >> Edge( label='startSensorRecording', **evattr, decorate='true', fontcolor='darkgreen') >> sensor
      sensor >> Edge( label='containerDetected', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='timeOut', **evattr, decorate='true', fontcolor='darkgreen') >> sensor
+     sys >> Edge( label='loadEnded', **evattr, decorate='true', fontcolor='darkgreen') >> sensor
      ioport >> Edge(color='magenta', style='solid', decorate='true', label='<loadRequest<font color="darkgreen"> loadEngaged retryLater loadRejected</font> &nbsp; >',  fontcolor='magenta') >> cargoservice
      cargoservice >> Edge(color='magenta', style='solid', decorate='true', label='<moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; >',  fontcolor='magenta') >> robotsmart
      cargoservice >> Edge(color='blue', style='solid',  decorate='true', label='<startBlink &nbsp; stopBlink &nbsp; >',  fontcolor='blue') >> led
