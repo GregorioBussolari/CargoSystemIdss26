@@ -23,11 +23,13 @@ Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 seco
 Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
 Dispatch updateHoldState  : updateHoldState(FREESLOT)"Fine procedura di carico, comunica anche il numero di slot rimanenti"
 
+Event    startOOS         : startOOS(X)             "Inizio stato Out Of Service"
 Event    endOOS           : endOOS(X)               "Fine stato Out Of Service"
 
 // --- Sensor -> CargoService (Eventi Proattivi di Business) ---
 Event    containerDetected : containerDetected(X)   "Emesso se D < DFREE/2 per 3s"
 Event    sensorAlarm       : sensorAlarm(X)         "Emesso se D > DFREE per 3s"
+Event    sensorRestored    : sensorRestored(X)    "Emesso se D < DFREE per 3s"
 
 // --- Gestione LED ---
 Dispatch startBlink       : startBlink(X)           "Gestione accensione blink LED"

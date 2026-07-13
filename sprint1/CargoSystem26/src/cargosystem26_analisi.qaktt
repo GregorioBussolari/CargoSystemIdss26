@@ -24,11 +24,13 @@ Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 seco
 Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
 Dispatch updateHoldState  : updateHoldState(FREESLOT)"Fine procedura di carico, comunica anche il numero di slot rimanenti"
 
+Event    startOOS         : startOOS(X)             "Inizio stato Out Of Service"
 Event    endOOS           : endOOS(X)               "Fine stato Out Of Service"
 
 // --- Sensor -> CargoService (Eventi Proattivi di Business) ---
 Event    containerDetected : containerDetected(X)   "Emesso se D < DFREE/2 per 3s"
 Event    sensorAlarm       : sensorAlarm(X)         "Emesso se D > DFREE per 3s"
+Event    sensorRestored    : sensorRestored(X)    "Emesso se D < DFREE per 3s"
 
 // --- Gestione LED ---
 Dispatch startBlink       : startBlink(X)           "Gestione accensione blink LED"
@@ -136,7 +138,7 @@ QActor cargoservice context ctxcargosystem
 	State startMoveToSensorArea{
 		println("$name | [ENGAGED] Robot move container verso Sensor Area") color magenta
 
-		request robotsmart -m moverobot : moverobot($SensorAreaX, $SensorAreaY, $StepTime)
+		request cargorobot -m moverobot : moverobot($SensorAreaX, $SensorAreaY, $StepTime)
 	}Transition t0
 		whenReply moverobotdone -> startMoveToSlot5
 		whenReply moverobotfailed -> handleDepositFailed
@@ -191,6 +193,7 @@ QActor cargoservice context ctxcargosystem
 		
 		//Emetto notifica fine carico
 		emit loadEnded : loadEnded(0) 
+		forward updateHoldState : updateHoldState($Num_empty_slot)
 		
 	}
 	Goto idle
@@ -207,7 +210,7 @@ QActor cargoservice context ctxcargosystem
 
 		forward led -m stopBlink : stopBlink(0)
 		emit timeOut : timeOut(0)
-		forward ioport -m updateHoldState : updateHoldState()
+		
 	}
 	Goto idle
 
@@ -225,10 +228,12 @@ QActor cargoservice context ctxcargosystem
 		//Spegnimento led
         forward led -m stopBlink : stopBlink(0)
         
+        emit startOOS : startOOS(0)
+        
 		println("$name | [OUT OF SERVICE] Sistema out of service!") color red
 	}
-	Transition tEndOOS
-		whenEvent endOOS -> handleEndOOS
+	Transition t0
+		whenEvent sensorRestored -> handleEndOOS
 	
 	State handleEndOOS{
 		println("$name | [ENDING OOS] Riprendo da idle") color green
@@ -240,9 +245,7 @@ QActor cargoservice context ctxcargosystem
                 Num_empty_slot++ 
             #]
             
-            forward led -m stopBlink : stopBlink(0)
-            emit timeOut : timeOut(0) 
-            forward updateHoldState : updateHoldState($Num_empty_slot)
+            emit endOOS : endOOS(0)
 		}
 	}
 	Goto idle 
@@ -299,6 +302,18 @@ QActor ioport context ctxcargosystem {
         // aggiornamento display 
     }
     Goto running
+}
+
+QActor cargorobot context ctxcargosystem{
+	State s0 initial {
+        println("$name | starts - cargorobot pronto") color blue
+    }
+    Goto waiting
+    
+    State waiting {
+        println("$name | In attesa di un utente che prema il pulsante per iniziare") color blue
+        [# Num ++ #]
+    }
 }
 
 QActor led context ctxcargosystem{
