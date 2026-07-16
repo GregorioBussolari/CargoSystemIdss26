@@ -1,228 +1,76 @@
 package domain;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 
-import cli.System.IO.IOException;
+import utils.HoldManifestReader;
 
 public class Hold implements IHold{
+	
+	public static class Coord {
+	    private final int x;
+	    private final int y;
+
+	    public Coord(int x, int y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+
+	    public int getX() { return x; }
+	    public int getY() { return y; }
+
+	    @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (o == null || getClass() != o.getClass()) return false;
+	        Coord coord = (Coord) o;
+	        return x == coord.x && y == coord.y;
+	    }
+
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(x, y);
+	    }
+	    
+	    @Override
+	    public String toString() {
+	        return "(" + x + "," + y + ")";
+	    }
+	}
+	
+	// Usiamo una LinkedHashMap per mantenere l'ordine alfabeti	
 	private int D;        //dimensione unità robotica in metri
-private int width;    // larghezza hold (in unità robotiche)
-private int length;   // lunghezza hold (in unità robotiche)
-private int[][] grid;         // griglia logica per la mappa mentale
+	private int width;    // larghezza hold (in unità robotiche)
+	private int length;   // lunghezza hold (in unità robotiche)
+	private int[][] grid;         // griglia logica per la mappa mentaleco/inserimento degli slot
 
-private Map<Coord, Slot> gridSlots = new HashMap<>();
+    private final Map<String, Coord> coords; // ioport, slot1-4, slot5
+    
 
-private Coord ioport;
-private Coord slot5;
-
-public static class Coord {
-    private final int x;
-    private final int y;
-
-    public Coord(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Hold(String manifestPath) {
+    	int[] dims = HoldManifestReader.extractDimensions(HoldManifestReader.read(manifestPath));
+        this.width = dims[0];
+        this.length = dims[1];
+        this.D = dims[2];
+        this.coords = HoldManifestReader.extractCoordinates(
+                HoldManifestReader.read(manifestPath));
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Coord coord = (Coord) o;
-        return x == coord.x && y == coord.y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
+    public Coord coordinatesOf(String slotName) {
+        Coord c = coords.get(slotName);
+        if (c == null) throw new IllegalArgumentException("Unknown slot: " + slotName);
+        return c;
     }
     
-    @Override
-    public String toString() {
-        return "(" + x + "," + y + ")";
-    }
-}
-
-// Costruttore di base
-	public Hold(int width, int length, int D) {
-	    this.width = width;
-	    this.length = length;
-	    this.D = D;
-	}
-	
-	public void addSlot(Coord coord, Slot slot) {
-	    this.gridSlots.put(coord, slot);
-	}
-	
-	public void clearAllSlots() {
-	    // Scorriamo solo i valori (gli Slot) della mappa e li liberiamo
-	    gridSlots.values().forEach(Slot::removeContainer);
+    public int getWidth() {
+		return this.width;
 	}
 
-	public boolean isFull() {
-			if (slot5 == null || gridSlots.isEmpty()) {
-				return false;
-		}
-		
-		// Logica per verificare se gli Slot 1-4 sono tutti occupati
-		return gridSlots.entrySet().stream()
-			        .filter(e -> !e.getKey().equals(slot5))
-					    .allMatch(e -> e.getValue().isOccupato());
-	}
-	
-	@Override
-	public Coord getIoPort() {
-		return ioport;
+	public int getLength() {
+		return this.length;
 	}
 
-	public void setIoport(Coord ioport) {
-		this.ioport = ioport;
+	public int getD() {
+		return this.D;
 	}
-	
-	@Override
-	public Coord getSlot5() {
-		return slot5;
-	}
-
-	public void setSlot5(Coord slot5) {
-		this.slot5 = slot5;
-	}
-
-	@Override
-	public ISlot findFreeSlot() {
-	    if (gridSlots.isEmpty()) {
-	        return null;
-	    }
-
-	    return gridSlots.entrySet().stream()
-	            // 1. Escludiamo lo slot5
-	            .filter(e -> !e.getKey().equals(slot5))
-	            // 2. Prendiamo il valore (lo Slot)
-	            .map(Map.Entry::getValue)
-	            // 3. Filtriamo per trovare quelli NON occupati
-	            .filter(slot -> !slot.isOccupato())
-	            // 4. ORDIDIAMO in base al nome dello slot per essere deterministici
-	            .sorted((s1, s2) -> s1.getName().compareTo(s2.getName()))
-	            // 5. Ora "findFirst" prenderà DAVVERO il primo in ordine logico
-	            .findFirst()
-	            .orElse(null);
-	}
-
-	@Override
-	public Coord getSlotCoord(ISlot slot) {
-		for (Map.Entry<Coord, Slot> entry : gridSlots.entrySet()) {
-	        if (Objects.equals(entry.getValue(), slot)) {
-	            return entry.getKey();
-	        }
-	    }
-	    return null; // Ritorna null se non trovato
-	}
-
-	
-	
-	public static Hold fromConfigFile(String filePath) throws IOException, FileNotFoundException, java.io.IOException {
-	    Properties prop = new Properties();
-	    
-	    // Leggiamo il file di configurazione
-	    try (InputStream input = new FileInputStream(filePath)) {
-	        prop.load(input);
-	    }
-
-	    // 1. Leggiamo i dati strutturali della griglia
-	    int width = Integer.parseInt(prop.getProperty("hold.width", "10"));
-	    int length = Integer.parseInt(prop.getProperty("hold.length", "10"));
-	    int d = Integer.parseInt(prop.getProperty("hold.D", "1"));
-
-	    // Creiamo l'istanza reale di Hold
-	    Hold hold = new Hold(width, length, d);
-
-	    // 2. Leggiamo e configuriamo le coordinate fisse di sistema
-	    hold.ioport = parseCoord(prop.getProperty("coord.ioport"));
-	    hold.slot5 = parseCoord(prop.getProperty("coord.slot5"));
-
-	    if (hold.ioport == null || hold.slot5 == null) {
-	        throw new IllegalArgumentException("Errore di configurazione: 'coord.ioport' e 'coord.slot5' sono obbligatori.");
-	    }
-
-	    // 3. Inizializziamo e mappiamo gli Slot dinamici standard da 1 a 4
-	    for (int i = 1; i <= 4; i++) {
-	        String coordStr = prop.getProperty("coord.slot" + i);
-	        if (coordStr != null) {
-	            Coord slotCoord = parseCoord(coordStr);
-	            // Inseriamo lo slot direttamente nella mappa gridSlots dell'istanza appena creata
-	            hold.gridSlots.put(slotCoord, new Slot("Slot" + i));
-	        }
-	    }
-	    
-	    // Inseriamo anche lo slot5 speciale nella mappa per coerenza di calcolo
-	    hold.gridSlots.put(hold.slot5, new Slot("Slot5"));
-
-	    return hold;
-	}
-
-	/**
-	 * Helper interno per convertire una stringa del tipo "x,y" in un oggetto Coord.
-	 */
-	private static Coord parseCoord(String rawValue) {
-	    if (rawValue == null || rawValue.trim().isEmpty()) {
-	        return null;
-	    }
-	    String[] parts = rawValue.split(",");
-	    int x = Integer.parseInt(parts[0].trim());
-	    int y = Integer.parseInt(parts[1].trim());
-	    return new Coord(x, y);
-	}
-	
-	@Override
-	public ISlot getSlot(String name) {
-	    if (name == null || gridSlots.isEmpty()) {
-	        return null;
-	    }
-
-	    return gridSlots.values().stream()
-	            .filter(slot -> Objects.equals(slot.getName(), name))
-	            .findFirst()
-	            .orElse(null);
-	}
-	
-	@Override
-	public String toString() {
-	    StringBuilder sb = new StringBuilder();
-	    sb.append("\n=================== HOLD STATUS ===================\n");
-	    sb.append(String.format("Dimensioni Griglia: %dx%d (D: %dm)\n", width, length, D));
-	    sb.append("Stato Stiva       : ").append(isFull() ? "COMPLETAMENTE PIENA" : "POSTI DISPONIBILI").append("\n");
-	    sb.append("---------------------------------------------------\n");
-	    sb.append("IO Port Coordinate: ").append(ioport != null ? ioport.toString() : "NON CONFIGURATA").append("\n");
-	    sb.append("Slot 5  Coordinate: ").append(slot5 != null ? slot5.toString() : "NON CONFIGURATA").append("\n");
-	    sb.append("---------------------------------------------------\n");
-	    sb.append("ELENCO SLOT E STATO CORRENTE:\n");
-
-	    if (gridSlots.isEmpty()) {
-	        sb.append(" Nessuno slot configurato nella mappa.\n");
-	    } else {
-	        // Ordiniamo gli slot per nome per avere una stampa pulita (Slot1, Slot2...)
-	        gridSlots.entrySet().stream()
-	            .sorted((e1, e2) -> e1.getValue().getName().compareTo(e2.getValue().getName()))
-	            .forEach(entry -> {
-	                Coord coord = entry.getKey();
-	                Slot slot = entry.getValue();
-	                String stato = slot.isOccupato() ? "[ OCCUPATO ]" : "[  LIBERO  ]";
-	                sb.append(String.format(" -> %-7s alle coordinate %-7s Stato: %s\n", 
-	                        slot.getName(), coord.toString(), stato));
-	            });
-	    }
-	    sb.append("===================================================");
-	    return sb.toString();
-	}
-
-
 }

@@ -1,14 +1,29 @@
 package domain;
 
-import domain.Hold.Coord;
-
 public interface IHold {
-	 //primtive 
-  boolean isFull();                 //True se la hold non ha più slot liberi
-  ISlot findFreeSlot();              //Restituisce uno slot libero o null nel caso non ci siano
-  //non primitive
-  Hold.Coord getSlotCoord(ISlot slot);         //Restituisce posizione di un dato slot
-  Hold.Coord getSlot5();                 //Restituisce posizione slot 5
-  Hold.Coord getIoPort();        //Restituisce posizione IOPort
-  ISlot getSlot(String name);  
+	/**
+     * Restituisce le coordinate spaziali associate a un dato slot logico o punto di interesse.
+     * * @param slotName Il nome identificativo dello slot (es. "ioport", "slot1", "slot5")
+     * @return L'oggetto {@link Hold.Coord} contenente le coordinate x e y
+     * @throws IllegalArgumentException se lo slot richiesto non esiste o non è configurato
+     */
+    Hold.Coord coordinatesOf(String slotName);
+
+    /**
+     * Restituisce la larghezza della stiva espressa in unità robotiche.
+     * * @return larghezza della hold
+     */
+    int getWidth();
+
+    /**
+     * Restituisce la lunghezza della stiva espressa in unità robotiche.
+     * * @return lunghezza della hold
+     */
+    int getLength();
+
+    /**
+     * Restituisce la dimensione di un'unità robotica espressa in metri (D).
+     * * @return dimensione D in metri
+     */
+    int getD();
 }

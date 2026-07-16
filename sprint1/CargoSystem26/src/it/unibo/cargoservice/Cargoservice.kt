@@ -29,17 +29,14 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		val hold = domain.Hold.fromConfigFile("properties.txt")
+		val hold = domain.HoldManager("properties.txt")
 		
-		    	val StepTime = 345 
 		//      var num_empty_slot = 4        // caso simulato in cui la hold sia libera
 		        var engaged = false			// stato cargoservice
 		        var SlotTarget : domain.ISlot? = null  //nullable
 		        var holdState = hold.toString()
-				var DeadlineTs = 0L            
-		        var RemainingMs : Long = 30000
-		        var DeadlineMarkTs = 0L
-		        var RemainingMarkMs : Long = 5000
+		        var IoPort = "ioport"
+		        var Slot5 = "slot5"
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -72,9 +69,9 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 							    		val freeSlot = hold.findFreeSlot()
 							    		SlotTarget = freeSlot	//assegno a var globale
 							    		val SlotTargetId = freeSlot?.getName() ?: "Unknown"
+							    		
 						answer("loadRequest", "loadEngaged", "loadEngaged($SlotTargetId)"   )  
 						
-						//	            num_empty_slot --
 							            engaged = true
 						forward("startBlink", "startBlink(0)" ,"led" ) 
 						CommUtils.outmagenta("$name | [ENGAGED] Request di carico accettata, slot disponibile: $SlotTargetId")
@@ -99,9 +96,6 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				}	 
 				state("waitingContainer") { //this:State
 					action { //it:State
-						
-						         	DeadlineTs = System.currentTimeMillis() + 30000
-						         	RemainingMs = 30000L
 						CommUtils.outmagenta("$name | [ENGAGED] attengo container entro 30s")
 						emit("startSensorRecording", "startSensortRecording(1)" ) 
 						//genTimer( actor, state )
@@ -109,47 +103,17 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					//After Lenzi Aug2002
 					sysaction { //it:State
 				 	 		stateTimer = TimerActor("timer_waitingContainer", 
-				 	 					  scope, context!!, "local_tout_"+name+"_waitingContainer", RemainingMs )  //OCT2023
+				 	 					  scope, context!!, "local_tout_"+name+"_waitingContainer", 30000.toLong() )  //OCT2023
 					}	 	 
 					 transition(edgeName="t12",targetState="handleTimeoutExpired",cond=whenTimeout("local_tout_"+name+"_waitingContainer"))   
 					transition(edgeName="t13",targetState="handleContainerDetected",cond=whenEvent("containerDetected"))
-					interrupthandle(edgeName="t14",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
-					transition(edgeName="t15",targetState="retryFromWaiting",cond=whenRequest("loadRequest"))
-					transition(edgeName="t16",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
-				}	 
-				state("awaitContainer") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_awaitContainer", 
-				 	 					  scope, context!!, "local_tout_"+name+"_awaitContainer", RemainingMs )  //OCT2023
-					}	 	 
-					 transition(edgeName="t17",targetState="handleTimeoutExpired",cond=whenTimeout("local_tout_"+name+"_awaitContainer"))   
-					transition(edgeName="t18",targetState="handleContainerDetected",cond=whenEvent("containerDetected"))
-					interrupthandle(edgeName="t19",targetState="handleAlarm",cond=whenEvent("sensorAlarm"),interruptedStateTransitions)
-					transition(edgeName="t110",targetState="retryFromWaiting",cond=whenRequest("loadRequest"))
-					transition(edgeName="t111",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
-				}	 
-				state("retryFromWaiting") { //this:State
-					action { //it:State
-						answer("loadRequest", "retryLater", "retryLater(0)"   )  
-						
-							        RemainingMs = maxOf(0L, DeadlineTs - System.currentTimeMillis())
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="awaitContainer", cond=doswitch() )
+					transition(edgeName="t14",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("handleTimeoutExpired") { //this:State
 					action { //it:State
 						CommUtils.outred("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged")
 						
 						            engaged = false
-									//num_empty_slot++
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
 						emit("timeOut", "timeOut(0)" ) 
 						//genTimer( actor, state )
@@ -174,156 +138,62 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("startMoveToSensorArea") { //this:State
 					action { //it:State
 						CommUtils.outmagenta("$name | [ENGAGED] Robot move container verso Sensor Area")
-						
-									var SensorAreaX = hold.getIoPort().getX()
-									var SensorAreaY = hold.getIoPort().getY()
-						request("moverobot", "moverobot($SensorAreaX,$SensorAreaY,$StepTime)" ,"robotsmart" )  
+						request("movetoslot", "movetoslot($IoPort)" ,"cargorobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="awaitMoveToSensorArea", cond=doswitch() )
-				}	 
-				state("awaitMoveToSensorArea") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t012",targetState="startMoveToSlot5",cond=whenReply("moverobotdone"))
-					transition(edgeName="t013",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
-					transition(edgeName="t014",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
-					transition(edgeName="t015",targetState="retryFromMoveToSensor",cond=whenRequest("loadRequest"))
-				}	 
-				state("retryFromMoveToSensor") { //this:State
-					action { //it:State
-						answer("loadRequest", "retryLater", "retryLater(0)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="awaitMoveToSensorArea", cond=doswitch() )
+					 transition(edgeName="t05",targetState="startMoveToSlot5",cond=whenReply("movetoslotdone"))
+					transition(edgeName="t06",targetState="handleDepositFailed",cond=whenReply("movetoslotfailed"))
+					transition(edgeName="t07",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("startMoveToSlot5") { //this:State
 					action { //it:State
 						CommUtils.outmagenta("$name | [ENGAGED] Carico recuperato in sensor area! Robot muove container verso Slot5")
-						
-							        var MoveTargetX = hold.getSlot5().getX()
-							        var MoveTargetY = hold.getSlot5().getY()
-						request("moverobot", "moverobot($MoveTargetX,$MoveTargetY,$StepTime)" ,"robotsmart" )  
+						request("movetoslot", "movetoslot($Slot5)" ,"cargorobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="awaitMoveToSlot5", cond=doswitch() )
-				}	 
-				state("awaitMoveToSlot5") { //this:State
-					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t016",targetState="markingSlot5",cond=whenReply("moverobotdone"))
-					transition(edgeName="t017",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
-					transition(edgeName="t018",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
-					transition(edgeName="t019",targetState="retryFromMoveToSlot5",cond=whenRequest("loadRequest"))
-				}	 
-				state("retryFromMoveToSlot5") { //this:State
-					action { //it:State
-						answer("loadRequest", "retryLater", "retryLater(0)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="awaitMoveToSlot5", cond=doswitch() )
+					 transition(edgeName="t08",targetState="markingSlot5",cond=whenReply("movetoslotdone"))
+					transition(edgeName="t09",targetState="handleDepositFailed",cond=whenReply("movetoslotfailed"))
+					transition(edgeName="t010",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("markingSlot5") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ")
-						
-						        	DeadlineMarkTs = System.currentTimeMillis() + 5000
-						        	RemainingMarkMs = 5000L
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 				 	 		stateTimer = TimerActor("timer_markingSlot5", 
-				 	 					  scope, context!!, "local_tout_"+name+"_markingSlot5", RemainingMarkMs )  //OCT2023
+				 	 					  scope, context!!, "local_tout_"+name+"_markingSlot5", 5000.toLong() )  //OCT2023
 					}	 	 
-					 transition(edgeName="t020",targetState="markingDone",cond=whenTimeout("local_tout_"+name+"_markingSlot5"))   
-					transition(edgeName="t021",targetState="retryFromLabeling",cond=whenRequest("loadRequest"))
-					transition(edgeName="t022",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
+					 transition(edgeName="t011",targetState="startMoveToSlot",cond=whenTimeout("local_tout_"+name+"_markingSlot5"))   
+					transition(edgeName="t012",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
-				state("awaitMarking") { //this:State
+				state("startMoveToSlot") { //this:State
 					action { //it:State
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-				 	 		stateTimer = TimerActor("timer_awaitMarking", 
-				 	 					  scope, context!!, "local_tout_"+name+"_awaitMarking", RemainingMarkMs )  //OCT2023
-					}	 	 
-					 transition(edgeName="t023",targetState="markingDone",cond=whenTimeout("local_tout_"+name+"_awaitMarking"))   
-					transition(edgeName="t024",targetState="retryFromLabeling",cond=whenRequest("loadRequest"))
-				}	 
-				state("retryFromLabeling") { //this:State
-					action { //it:State
-						answer("loadRequest", "retryLater", "retryLater(0)"   )  
-						 RemainingMarkMs = maxOf(0L, DeadlineMarkTs - System.currentTimeMillis())  
+						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento verso $SlotTarget")
+						 val SlotTargetId = SlotTarget?.getName() ?: "Unknown"  
+						request("movetoslot", "movetoslot($SlotTargetId)" ,"cargorobot" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="awaitMarking", cond=doswitch() )
-				}	 
-				state("markingDone") { //this:State
-					action { //it:State
-						CommUtils.outgreen("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget")
-						
-									//Acquisizione coordinate target
-									var CoordTarget = hold.getSlotCoord(SlotTarget)
-									var TargetX = CoordTarget.getX()
-									var TargetY = CoordTarget.getY()
-						request("moverobot", "moverobot($TargetX,$TargetY,$StepTime)" ,"robotsmart" )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t025",targetState="handleDepositSuccess",cond=whenReply("moverobotdone"))
-					transition(edgeName="t026",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
-					transition(edgeName="t027",targetState="awaitMarkingDone",cond=whenRequest("loadRequest"))
-					transition(edgeName="t028",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
-				}	 
-				state("awaitMarkingDone") { //this:State
-					action { //it:State
-						answer("loadRequest", "retryLater", "retryLater(0)"   )  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition(edgeName="t129",targetState="handleDepositSuccess",cond=whenReply("moverobotdone"))
-					transition(edgeName="t130",targetState="handleDepositFailed",cond=whenReply("moverobotfailed"))
-					transition(edgeName="t131",targetState="awaitMarkingDone",cond=whenRequest("loadRequest"))
-					transition(edgeName="t132",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
+					 transition(edgeName="t013",targetState="handleDepositSuccess",cond=whenReply("movetoslotdone"))
+					transition(edgeName="t014",targetState="handleDepositFailed",cond=whenReply("movetoslotfailed"))
+					transition(edgeName="t015",targetState="handleAlarm",cond=whenEvent("sensorAlarm"))
 				}	 
 				state("handleDepositSuccess") { //this:State
 					action { //it:State
 						CommUtils.outgreen("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget")
 						
-									//occupazione slot da parte del container engaged
 									SlotTarget?.putContainer()
 									var holdState = hold.toString()
-									
-									
 									engaged = false
 						CommUtils.outgreen("$name | Stato Hold: $holdState")
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
@@ -339,11 +209,10 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 					action { //it:State
 						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
 						 	   
-						CommUtils.outred("$name | [DISENGAGED] deposito fallito, RobotSmart26 non ha completato il piano")
+						CommUtils.outred("$name | [DISENGAGED] deposito fallito, CargoRobot non ha completato il piano")
 						
 									engaged = false
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
-						emit("timeOut", "timeOut(0)" ) 
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -366,13 +235,14 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 				state("outOfService") { //this:State
 					action { //it:State
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
+						forward("startOOS", "startOOS(0)" ,"cargorobot" ) 
 						CommUtils.outred("$name | [OUT OF SERVICE] Sistema out of service!")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="tEndOOS33",targetState="handleEndOOS",cond=whenEvent("endOOS"))
+					 transition(edgeName="t016",targetState="handleEndOOS",cond=whenEvent("sensorRestored"))
 				}	 
 				state("handleEndOOS") { //this:State
 					action { //it:State
@@ -380,9 +250,8 @@ class Cargoservice ( name: String, scope: CoroutineScope, isconfined: Boolean=fa
 						if(  engaged == true  
 						 ){
 						                engaged = false
-						//                num_empty_slot++ 
 						forward("stopBlink", "stopBlink(0)" ,"led" ) 
-						emit("timeOut", "timeOut(0)" ) 
+						forward("endOOS", "endOOS(0)" ,"cargorobot" ) 
 						}
 						//genTimer( actor, state )
 					}

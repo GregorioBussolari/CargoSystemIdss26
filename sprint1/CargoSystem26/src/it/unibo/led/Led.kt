@@ -48,8 +48,8 @@ class Led ( name: String, scope: CoroutineScope, isconfined: Boolean=false, isdy
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t038",targetState="ledOn",cond=whenDispatch("startBlink"))
-					transition(edgeName="t039",targetState="ledOff",cond=whenDispatch("stopBlink"))
+					 transition(edgeName="t027",targetState="ledOn",cond=whenDispatch("startBlink"))
+					transition(edgeName="t028",targetState="ledOff",cond=whenDispatch("stopBlink"))
 				}	 
 				state("ledOn") { //this:State
 					action { //it:State

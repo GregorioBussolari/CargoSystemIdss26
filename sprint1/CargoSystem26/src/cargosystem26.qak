@@ -8,6 +8,7 @@ Reply moverobotdone : moverobotok(ARG) for moverobot
 Reply moverobotfailed: moverobotfailed(PLANDONE, PLANTODO) for moverobot
 Dispatch noplan : noplan(X) "autodispatch"
 Dispatch setplanbuildelay : value(V) "parameter = V >= 0"
+Event alarm   : alarm(X)		"event at application level"
 
 // --- IOPort <-> CargoService ---
 Request  loadRequest      : loadRequest(X)          "Richiesta di carico dall'operatore"
@@ -21,10 +22,10 @@ Dispatch buttonPressed    : buttonPressed(X)        "Richiesta di carico da part
 // --- CargoService -> IOPort (Feedback Asincroni) ---
 Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 secondi"
 Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
-Dispatch updateHoldState  : updateHoldState(FREESLOT)"Fine procedura di carico, comunica anche il numero di slot rimanenti"
+//Dispatch updateHoldState  : updateHoldState(FREESLOT)"Fine procedura di carico, comunica anche il numero di slot rimanenti"
 
-Event    startOOS         : startOOS(X)             "Inizio stato Out Of Service"
-Event    endOOS           : endOOS(X)               "Fine stato Out Of Service"
+Dispatch    startOOS         : startOOS(X)             "Inizio stato Out Of Service"
+Dispatch    endOOS           : endOOS(X)               "Fine stato Out Of Service"
 
 // --- Sensor -> CargoService (Eventi Proattivi di Business) ---
 Event    containerDetected : containerDetected(X)   "Emesso se D < DFREE/2 per 3s"
@@ -39,6 +40,10 @@ Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink 
 Event startSensorRecording : startSensortRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
 
 
+// --- IOPort <-> CargoService ---
+Request movetoslot : movetoslot(SLOTN)				"Richiesta di spostamento, Data la stringa identificativa dello slot"
+Reply movetoslotdone : movetoslottdone(ARG) for movetoslot
+Reply movetoslotfailed: movetoslotfailed(PLANDONE, PLANTODO) for movetoslot
 
 // --- Contesti ---
 
@@ -51,29 +56,26 @@ ExternalQActor robotsmart context ctxrobotsmart
 
 
 QActor cargoservice context ctxcargosystem 
-    withobj hold using "domain.Hold.fromConfigFile(\"properties.txt\")"{
+    withobj hold using "domain.HoldManager(\"properties.txt\")"{
     
     [#
-    	val StepTime = 345 
 //      var num_empty_slot = 4        // caso simulato in cui la hold sia libera
         var engaged = false			// stato cargoservice
         var SlotTarget : domain.ISlot? = null  //nullable
         var holdState = hold.toString()
-		var DeadlineTs = 0L            
-        var RemainingMs : Long = 30000
-        var DeadlineMarkTs = 0L
-        var RemainingMarkMs : Long = 5000
+        var IoPort = "ioport"
+        var Slot5 = "slot5"
     #]
     
     State s0 initial {
         println("$name | starts - Inizializzazione Orchestratore Cargo Service: $holdState") color green
+        
     }
     Goto idle
 
 	// --- STATO IDLE --. 
 
     State idle {
-        // Stato di attesa reattiva delle richieste (loadRequest) o eventi (sensorAlarm)
         [# engaged = false #]
         println("$name | [DISENGAGED] attendo request") color green
     }
@@ -91,14 +93,13 @@ QActor cargoservice context ctxcargosystem
 	    		val freeSlot = hold.findFreeSlot()
 	    		SlotTarget = freeSlot	//assegno a var globale
 	    		val SlotTargetId = freeSlot?.getName() ?: "Unknown"
+	    		
 	    	#]
 	        replyTo loadRequest with loadEngaged : loadEngaged($SlotTargetId)
 	        [#
-//	            num_empty_slot --
 	            engaged = true
 	        #]
 	        
-	        //Accensione led 
 	        forward led -m startBlink : startBlink(0)
 	        
 	        println("$name | [ENGAGED] Request di carico accettata, slot disponibile: $SlotTargetId") color magenta
@@ -116,49 +117,21 @@ QActor cargoservice context ctxcargosystem
 	Goto waitingContainer if [# engaged == true #] else idle 
 	
 	State waitingContainer {
-		 // Calcolo millisecondi 
-		 [#
-         	DeadlineTs = System.currentTimeMillis() + 30000
-         	RemainingMs = 30000L
-    	 #]
 		 println("$name | [ENGAGED] attengo container entro 30s") color magenta
 		 emit startSensorRecording : startSensortRecording(1)
 	}
 	Transition t1
- 		whenTimeVar RemainingMs -> handleTimeoutExpired 		//Dopo 30 secondi scade
-		whenEvent containerDetected -> handleContainerDetected  //Altrimenti passa alla gestione del container detected
-		whenInterruptEvent sensorAlarm -> handleAlarm     		//Allarme out of service
-		whenRequest loadRequest -> retryFromWaiting  		    //Request during waiting for container (engaged)
-	    whenEvent sensorAlarm -> handleAlarm
+ 		whenTime 30000 -> handleTimeoutExpired
+		whenEvent containerDetected -> handleContainerDetected
+		whenEvent sensorAlarm -> handleAlarm
 		
-		
-	State awaitContainer {
-	}
-	Transition t1
-	    whenTimeVar RemainingMs -> handleTimeoutExpired
-	    whenEvent containerDetected -> handleContainerDetected
-	    whenInterruptEvent sensorAlarm -> handleAlarm
-	    whenRequest loadRequest -> retryFromWaiting
-	    whenEvent sensorAlarm -> handleAlarm
-	    
-	
-	State retryFromWaiting {
-	    replyTo loadRequest with retryLater : retryLater(0)
-	    [#
-	        RemainingMs = maxOf(0L, DeadlineTs - System.currentTimeMillis())
-	    #]
-	}
-	Goto awaitContainer
-	
-	//  --- TIMEOUT SCADUTO ---
 	
 	State handleTimeoutExpired {
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red
 		[#
             engaged = false
-			//num_empty_slot++
         #]
-        forward led -m stopBlink : stopBlink(0) 	   //Spegnimento led	        
+        forward led -m stopBlink : stopBlink(0)
         
         emit timeOut : timeOut(0)
 	}
@@ -173,119 +146,49 @@ QActor cargoservice context ctxcargosystem
 	Goto startMoveToSensorArea
 	
 	// --- BLOCCO MOVE TO SENSOR AREA ---
+	// CargoService non conosce più coordinate: chiede a CargoRobot di andare
+	// verso lo slot logico "ioport" (l'area del sensore)
 	
 	State startMoveToSensorArea{
 		println("$name | [ENGAGED] Robot move container verso Sensor Area") color magenta
-		[#
-			var SensorAreaX = hold.getIoPort().getX()
-			var SensorAreaY = hold.getIoPort().getY()
-		#]
-		request robotsmart -m moverobot : moverobot($SensorAreaX, $SensorAreaY, $StepTime)
-	}
-	Goto awaitMoveToSensorArea
-	
-	State awaitMoveToSensorArea{
-		// Stato vuoto che simula l' attesa del termine dello stato precedente 
-		// Utile nel caso vengano ricevute request mentre il sistema è nello stato engaged
-	}
-	
-	Transition t0
-		whenReply moverobotdone -> startMoveToSlot5
-		whenReply moverobotfailed -> handleDepositFailed
-		whenEvent sensorAlarm -> handleAlarm
-		whenRequest loadRequest -> retryFromMoveToSensor
 		
-	State retryFromMoveToSensor {
-	    replyTo loadRequest with retryLater : retryLater(0)
+		request cargorobot -m movetoslot : movetoslot($IoPort)
 	}
-	Goto awaitMoveToSensorArea
-	
-	// --- BLOCCO MOVE TO SLOT 5 ---
+	Transition t0
+		whenReply movetoslotdone -> startMoveToSlot5
+		whenReply movetoslotfailed -> handleDepositFailed
+		whenEvent sensorAlarm -> handleAlarm
+		
 
 	State startMoveToSlot5{
 	    println("$name | [ENGAGED] Carico recuperato in sensor area! Robot muove container verso Slot5") color magenta
-	    [#
-	        var MoveTargetX = hold.getSlot5().getX()
-	        var MoveTargetY = hold.getSlot5().getY()
-	    #]
-	    request robotsmart -m moverobot : moverobot($MoveTargetX, $MoveTargetY, $StepTime)
-	}
-	Goto awaitMoveToSlot5
-	
-	State awaitMoveToSlot5 {
-		// Stato vuoto che simula l' attesa del termine dello stato precedente 
-		// Utile nel caso vengano ricevute request mentre il sistema è nello stato engaged
+	    request cargorobot -m movetoslot : movetoslot($Slot5)
 	}
 	Transition t0
-	    whenReply moverobotdone -> markingSlot5
-	    whenReply moverobotfailed -> handleDepositFailed
+		whenReply movetoslotdone -> markingSlot5
+	    whenReply movetoslotfailed -> handleDepositFailed
 	    whenEvent sensorAlarm -> handleAlarm
-	    whenRequest loadRequest -> retryFromMoveToSlot5
-	
-	State retryFromMoveToSlot5 {
-	    replyTo loadRequest with retryLater : retryLater(0)
-	}
-	Goto awaitMoveToSlot5
 		
 	// --- BLOCCO MARKING CONTAINER ---	
 	
 	State markingSlot5{
 		println("$name | [ENGAGED] container arrivato in slot5: inizio procedura di labeling ") color green 
-		
-		[#
-        	DeadlineMarkTs = System.currentTimeMillis() + 5000
-        	RemainingMarkMs = 5000L
-    	#]
-		
 	}
 	Transition t0
-	    whenTimeVar RemainingMarkMs -> markingDone
-	    whenRequest loadRequest -> retryFromLabeling
+	    whenTime 5000 -> startMoveToSlot
 	    whenEvent sensorAlarm -> handleAlarm
 	    
-	    
-	State awaitMarking {
-		// Stato vuoto che simula l' attesa del termine dello stato precedente 
-		// Utile nel caso vengano ricevute request mentre il sistema è nello stato engaged
+	
+	State startMoveToSlot {
+		println("$name | [ENGAGED] container etichettato, robot in movimento verso $SlotTarget") color green 
+		[# val SlotTargetId = SlotTarget?.getName() ?: "Unknown" #]
+		request cargorobot -m movetoslot : movetoslot($SlotTargetId)
 	}
 	Transition t0
-	    whenTimeVar RemainingMarkMs -> markingDone
-	    whenRequest loadRequest -> retryFromLabeling
-	
-	State retryFromLabeling {
-	    replyTo loadRequest with retryLater : retryLater(0)
-	    [# RemainingMarkMs = maxOf(0L, DeadlineMarkTs - System.currentTimeMillis()) #]
-	    
-	}
-	Goto awaitMarking
-	
-	State markingDone {
-		println("$name | [ENGAGED] container etichettato, robot in movimento  verso  $SlotTarget") color green 
-		[#
-			//Acquisizione coordinate target
-			var CoordTarget = hold.getSlotCoord(SlotTarget)
-			var TargetX = CoordTarget.getX()
-			var TargetY = CoordTarget.getY()
-		#]
-		
-		request robotsmart -m moverobot : moverobot($TargetX, $TargetY, $StepTime)
-	}
-	Transition t0
-	    whenReply moverobotdone -> handleDepositSuccess
-	    whenReply moverobotfailed -> handleDepositFailed
-	    whenRequest loadRequest -> awaitMarkingDone
+	    whenReply movetoslotdone -> handleDepositSuccess
+	    whenReply movetoslotfailed -> handleDepositFailed
 	    whenEvent sensorAlarm -> handleAlarm
 	    
-	State awaitMarkingDone {
-		// Stato con solo la reply che simula l' attesa del termine dello stato precedente 
-		//  nel caso vengano ricevute request mentre il sistema è nello stato engaged
- 	    replyTo loadRequest with retryLater : retryLater(0)
-	}
-	Transition t1
-		whenReply moverobotdone -> handleDepositSuccess
-	    whenReply moverobotfailed -> handleDepositFailed
-	    whenRequest loadRequest -> awaitMarkingDone
-		whenEvent sensorAlarm -> handleAlarm
 	    
 	// -- DEPOSITO FATTO ---
 	
@@ -294,20 +197,14 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget") color green 
 		
 		[#
-			//occupazione slot da parte del container engaged
 			SlotTarget?.putContainer()
 			var holdState = hold.toString()
-			
-			
 			engaged = false
 		#]
 		println("$name | Stato Hold: $holdState") color green
 		
-		
-		//Spengo led 
 		forward led -m stopBlink : stopBlink(0)
 		
-		//Emetto notifica fine carico
 		emit loadEnded : loadEnded(0) 
 		
 	}
@@ -315,7 +212,7 @@ QActor cargoservice context ctxcargosystem
 	
 	State handleDepositFailed{
 		printCurrentMessage color yellow
-		println("$name | [DISENGAGED] deposito fallito, RobotSmart26 non ha completato il piano") color red
+		println("$name | [DISENGAGED] deposito fallito, CargoRobot non ha completato il piano") color red
 
 		// Comportamento conservativo: trattato come un timeout (si veda nota TF6 nel Test Plan
 		// sulla politica di retry, punto ancora da rivalutare col committente)
@@ -324,7 +221,6 @@ QActor cargoservice context ctxcargosystem
 		#]
 
 		forward led -m stopBlink : stopBlink(0)
-		emit timeOut : timeOut(0)
 	}
 	Goto idle
 
@@ -333,35 +229,109 @@ QActor cargoservice context ctxcargosystem
 	
 	State handleAlarm{
 		printCurrentMessage color yellow
-    println("$name | [OUT OF SERVICE] Allarme Out of Service rilevato") color red
+        println("$name | [OUT OF SERVICE] Allarme Out of Service rilevato") color red
 	}
 	Goto outOfService
 	
 	State outOfService{
 		
-		//Spegnimento led
         forward led -m stopBlink : stopBlink(0)
+        
+        forward cargorobot -m startOOS : startOOS(0)
         
 		println("$name | [OUT OF SERVICE] Sistema out of service!") color red
 	}
-	Transition tEndOOS
-		whenEvent endOOS -> handleEndOOS
+	Transition t0
+		whenEvent sensorRestored -> handleEndOOS
 	
 	State handleEndOOS{
 		println("$name | [ENDING OOS] Riprendo da idle") color green
 		if [# engaged == true #] {
-			
-			//Reset stato e libero slot aumentando numero di empty slot
             [#
                 engaged = false
-//                num_empty_slot++ 
             #]
             
-            forward led -m stopBlink : stopBlink(0)
-            emit timeOut : timeOut(0) 
+            forward led -m stopBlink : stopBlink(0) 
+            
+            forward cargorobot -m endOOS : endOOS(0)
 		}
 	}
 	Goto idle 
+}
+QActor cargorobot context ctxcargosystem 
+    withobj slotmap using "domain.Hold(\"properties.txt\")"{
+    
+    [#
+        val StepTime = 345
+        var PlanDone = "''"
+    	var PlanToDo = "''"
+    	var Arg = "''"
+    #]
+    
+    State s0 initial {
+        println("$name | starts, in attesa di richieste da cargoservice") color magenta
+    }
+    Goto waiting
+    
+    State waiting {
+        println("$name | [READY] in attesa") color magenta
+    }
+    Transition t0
+        whenRequest movetoslot -> handleMoveToSlot
+        whenInterrupt startOOS -> handleStartOOS
+        whenMsg endOOS -> handleEndOOS
+
+    // --- TRADUZIONE movetoslot -> moverobot ---
+
+    State handleMoveToSlot {
+        onMsg(movetoslot : movetoslot(SLOTN)) {
+            [#
+            	val SlotTarget = payloadArg(0)
+                val target = slotmap.coordinatesOf(SlotTarget)
+                val TX = target.getX()
+                val TY = target.getY()
+            #]
+            println("$name | ricevuto movetoslot($SlotTarget) -> target ($TX,$TY)") color cyan
+            request robotsmart -m moverobot : moverobot($TX, $TY, $StepTime)
+        }
+    }
+    Transition t1
+        whenReply moverobotdone -> replySuccessToCaller
+        whenReply moverobotfailed -> replyFailureToCaller
+        whenInterrupt startOOS -> handleStartOOS
+
+    State replySuccessToCaller {
+        onMsg(moverobotdone : moverobotok(ARG)) {
+        	[#Arg= payloadArg(0)#]
+        }
+        replyTo movetoslot with movetoslotdone : movetoslotdone($Arg)
+    }
+    Goto waiting
+
+    State replyFailureToCaller {
+        onMsg(moverobotfailed : moverobotfailed(PLANDONE,PLANTODO)) {
+        	[#
+        		val PlanDone= payloadArg(0)
+        		val PlanToDo= payloadArg(1)
+        	#]
+            println("$name | movimento fallito, plan done=$PlanDone todo=$PlanToDo") color red
+        }
+        replyTo movetoslot with movetoslotfailed : movetoslotfailed($PlanDone,$PlanToDo)
+    }
+    Goto waiting
+
+    // --- OUT OF SERVICE: traduzione verso robotsmart26 ---
+
+    State handleStartOOS {
+        println("$name | [OOS] segnalo alarm a robotsmart26") color red
+        emit alarm : alarm(1)
+        returnFromInterrupt
+    }
+
+    State handleEndOOS {
+        println("$name | [OOS] fine allarme, torno operativo") color green
+    }
+    Goto waiting
 }
 
 QActor ioport context ctxcargosystem {
