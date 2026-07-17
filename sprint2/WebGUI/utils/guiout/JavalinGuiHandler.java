@@ -17,6 +17,17 @@ import unibo.basicomm23.interfaces.Interaction;
 import unibo.basicomm23.mqtt.MqttInteraction;
 import unibo.basicomm23.msg.ApplMessage;
 
+
+/*
+ * --------- TODO --------
+ * 
+ * Va messo a posto per questo progetto
+ *
+ * ----------------------- 
+ * 
+ */
+
+
 public class JavalinGuiHandler {
 
 	public WsMessageContext pageCtx;
