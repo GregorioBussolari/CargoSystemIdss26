@@ -29,11 +29,16 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		 var Num = 0  
+		 
+		        // Istanza del server Javalin integrato
+		        var GuiServer : guiout.JavalinGuiHandler? = null
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | starts - Interfaccia Utente Disponibile")
+						CommUtils.outmagenta("$name | starts - Avvio Server WebGUI su porta 8040")
+						 
+						            GuiServer = guiout.JavalinGuiHandler(8040)
+						            GuiServer!!.setActor(myself)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -43,36 +48,35 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("running") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | In attesa di un utente che prema il pulsante per iniziare")
-						 Num ++  
+						CommUtils.outmagenta("$name | In attesa di input dall'utente...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t023",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					 transition(edgeName="t00",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | Bottone premuto! Richiesta di carico arrivata, request verso cargoservice")
-						request("loadRequest", "loadRequest($Num)" ,"cargoservice" )  
+						CommUtils.outgreen("$name | Bottone premuto! Richiesta inoltrata a CargoService")
+						 GuiServer!!.updateState("disengaged", "Elaborazione richiesta...")  
+						request("loadRequest", "loadRequest(1)" ,"cargoservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t024",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t025",targetState="handleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t026",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition(edgeName="t11",targetState="handleEngaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t12",targetState="handleReject",cond=whenReply("loadRejected"))
+					transition(edgeName="t13",targetState="handleRetry",cond=whenReply("retryLater"))
 				}	 
 				state("handleEngaged") { //this:State
 					action { //it:State
-						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
-						 	   
 						if( checkMsgContent( Term.createTerm("loadEngaged(SLOT)"), Term.createTerm("loadEngaged(SLOT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 var slot = payloadArg(0)  
-								CommUtils.outgreen("$name | Carico Accettato, slot assegnato $slot")
+								 val Slot = payloadArg(0)  
+								CommUtils.outgreen("$name | Carico Accettato: $Slot")
+								 GuiServer!!.updateState("engaged", "Service working: Carico in $Slot")  
 						}
 						//genTimer( actor, state )
 					}
@@ -83,9 +87,8 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("handleReject") { //this:State
 					action { //it:State
-						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
-						 	   
-						CommUtils.outred("$name | Carico NON Accettato, tutti gli slot sono occupati")
+						CommUtils.outred("$name | Carico Rifiutato (Hold Piena)")
+						 GuiServer!!.updateState("outofservice", "Richiesta Rifiutata: Stiva Piena")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -95,9 +98,8 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("handleRetry") { //this:State
 					action { //it:State
-						CommUtils.outyellow("$name in ${currentState.stateName} | $currentMsg | ${Thread.currentThread().getName()} n=${Thread.activeCount()}")
-						 	   
-						CommUtils.outred("$name | Carico NON Accettato, IOPort correntemente occupata, riprova più tardi")
+						CommUtils.outred("$name | Sistema occupato, riprovare")
+						 GuiServer!!.updateState("slot", "Sistema Occupato. Riprovare più tardi.")  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
