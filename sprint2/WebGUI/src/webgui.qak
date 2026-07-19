@@ -4,67 +4,63 @@ System webgui
 Dispatch buttonPressed    : buttonPressed(X)        "Pressione bottone da GUI"
 Request  loadRequest      : loadRequest(X)          "Richiesta di carico verso CargoService"
 Reply    loadEngaged      : loadEngaged(SLOT)       for loadRequest
-Reply    retryLater       : retryLater(X)           for loadRequest
-Reply    loadRejected     : loadRejected(X)         for loadRequest
+Reply    retryLater       : retryLater(X)            for loadRequest
+Reply    loadRejected     : loadRejected(X)          for loadRequest
 
 // Contesto per il nodo IOPort
 Context ctxioport ip [host="localhost" port=8040]
 // Contesto remoto del CargoService
 Context ctxcargosystem ip [host="localhost" port=8120]
 
-// Attore remoto (il cuore del sistema)
 ExternalQActor cargoservice context ctxcargosystem
 
+
 QActor ioport context ctxioport {
-    [# 
-        // Istanza del server Javalin integrato
-        var GuiServer : guiout.JavalinGuiHandler? = null
-    #]
     
+    [# lateinit var gui: guiout.IoPortGuiHandler #] 
+
     State s0 initial {
-        println("$name | starts - Avvio Server WebGUI su porta 8040") color magenta
-        [# 
-            GuiServer = guiout.JavalinGuiHandler(8040)
-            GuiServer!!.setActor(myself)
-        #]
+    	[#
+	        // Istanza server javalin
+	        val gui = guiout.IoPortGuiHandler("guih", 8050, myself)
+	    #]
+        println("$name | starts - Avvio Server WebGUI su porta 8050") color magenta
     }
     Goto running
-    
+
     State running {
         println("$name | In attesa di input dall'utente...") color magenta
     }
     Transition t0
         whenMsg buttonPressed -> handleButtonPressed
-    
+
     State handleButtonPressed {
         println("$name | Bottone premuto! Richiesta inoltrata a CargoService") color green
-        [# GuiServer!!.updateState("disengaged", "Elaborazione richiesta...") #]
-        
         request cargoservice -m loadRequest : loadRequest(1)
     }
     Transition t1
         whenReply loadEngaged  -> handleEngaged
         whenReply loadRejected -> handleReject
         whenReply retryLater   -> handleRetry
-        
+
     State handleEngaged {
         onMsg(loadEngaged : loadEngaged(SLOT)) {
-            [# val Slot = payloadArg(0) #]
-            println("$name | Carico Accettato: $Slot") color green
-            [# GuiServer!!.updateState("engaged", "Service working: Carico in $Slot") #]
-        }    
-    } 
-    Goto running 
-    
-    State handleReject {
-        println("$name | Carico Rifiutato (Hold Piena)") color red
-        [# GuiServer!!.updateState("outofservice", "Richiesta Rifiutata: Stiva Piena") #]
+            [# val slotName = payloadArg(0) #]
+            println("$name | Carico Accettato: $slotName") color green
+            [# gui.updateState("engaged", "Service working: Carico in $slotName") #]
+        }
     }
     Goto running
-    
+
+    State handleReject {
+        println("$name | Carico Rifiutato (Hold Piena)") color red
+        [# gui.updateState("disengaged", "Richiesta rifiutata: Hold piena") #]
+    }
+    Goto running
+
     State handleRetry {
         println("$name | Sistema occupato, riprovare") color red
-        [# GuiServer!!.updateState("slot", "Sistema Occupato. Riprovare più tardi.") #]
+        [# gui.updateState("engaged", "Sistema occupato. Riprovare più tardi.") #]
     }
     Goto running
 }
