@@ -1,66 +1,60 @@
 System webgui
 
 // Dichiarazione dei messaggi di interfaccia
-Dispatch buttonPressed    : buttonPressed(X)        "Pressione bottone da GUI"
-Request  loadRequest      : loadRequest(X)          "Richiesta di carico verso CargoService"
-Reply    loadEngaged      : loadEngaged(SLOT)       for loadRequest
+Dispatch buttonPressed    : buttonPressed(X)         "Pressione bottone da GUI"
+Request  loadRequest      : loadRequest(X)           "Richiesta di carico verso CargoService"
+Reply    loadEngaged      : loadEngaged(SLOT)        for loadRequest
 Reply    retryLater       : retryLater(X)            for loadRequest
 Reply    loadRejected     : loadRejected(X)          for loadRequest
 
-// Contesto per il nodo IOPort
-Context ctxioport ip [host="localhost" port=8040]
-// Contesto remoto del CargoService
-Context ctxcargosystem ip [host="localhost" port=8120]
+Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 secondi"
+Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
+
+// Contesti
+Context ctxioport 		ip [host="localhost" port=8040]
+Context ctxcargosystem  ip [host="127.0.0.1" port=8120]
 
 ExternalQActor cargoservice context ctxcargosystem
 
-
 QActor ioport context ctxioport {
-    
-    [# lateinit var gui: guiout.IoPortGuiHandler #] 
+    [# 
+        lateinit var gui: guiout.IoPortGuiHandler 
+        lateinit var coapObserver: guiout.CargoServiceCoapObserver
+        var Num = 0
+    #] 
 
     State s0 initial {
-    	[#
-	        // Istanza server javalin
-	        val gui = guiout.IoPortGuiHandler("guih", 8050, myself)
-	    #]
-        println("$name | starts - Avvio Server WebGUI su porta 8050") color magenta
+        [#
+            gui = guiout.IoPortGuiHandler("guih", 8050, myself)
+            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui)
+        #]
     }
-    Goto running
+    Goto ready
 
-    State running {
-        println("$name | In attesa di input dall'utente...") color magenta
+    // Stato in cui il bottone è attivo
+    State ready {
+        println("$name | [READY] In attesa di input...") color magenta
     }
     Transition t0
         whenMsg buttonPressed -> handleButtonPressed
 
     State handleButtonPressed {
-        println("$name | Bottone premuto! Richiesta inoltrata a CargoService") color green
-        request cargoservice -m loadRequest : loadRequest(1)
+        [# Num++ #]
+        println("$name | Bottone premuto! Richiesta inviata") color green
+        request cargoservice -m loadRequest : loadRequest($Num)
+    }
+    // Passiamo subito a uno stato "blindato"
+    Goto engaged
+
+    // Stato in cui il bottone NON è tra le transition (quindi le richieste sono ignorate)
+    State engaged {
+        println("$name | [ENGAGED] Richieste disabilitate.") color yellow
     }
     Transition t1
-        whenReply loadEngaged  -> handleEngaged
-        whenReply loadRejected -> handleReject
-        whenReply retryLater   -> handleRetry
-
-    State handleEngaged {
-        onMsg(loadEngaged : loadEngaged(SLOT)) {
-            [# val slotName = payloadArg(0) #]
-            println("$name | Carico Accettato: $slotName") color green
-            [# gui.updateState("engaged", "Service working: Carico in $slotName") #]
-        }
-    }
-    Goto running
-
-    State handleReject {
-        println("$name | Carico Rifiutato (Hold Piena)") color red
-        [# gui.updateState("disengaged", "Richiesta rifiutata: Hold piena") #]
-    }
-    Goto running
-
-    State handleRetry {
-        println("$name | Sistema occupato, riprovare") color red
-        [# gui.updateState("engaged", "Sistema occupato. Riprovare più tardi.") #]
-    }
-    Goto running
+        // Solo quando CargoService ci notifica la fine, torniamo in ready
+        whenEvent loadEnded -> ready
+        whenEvent timeOut   -> ready
+        // Eventualmente gestire anche il fallimento/rifiuto se necessario
+        whenReply loadRejected -> ready
+        whenReply retryLater   -> ready
 }

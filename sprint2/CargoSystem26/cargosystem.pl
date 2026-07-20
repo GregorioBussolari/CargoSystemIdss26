@@ -30,13 +30,13 @@ reply( movetoslotfailed, movetoslotfailed(PLANDONE,PLANTODO) ).  %%for movetoslo
 %====================================================================================
 context(ctxcargosystem, "localhost",  "TCP", "8120").
 context(ctxrobotsmart, "127.0.0.1",  "TCP", "8020").
+context(ctxioport, "127.0.0.1",  "TCP", "8040").
  qactor( robotsmart, ctxrobotsmart, "external").
+  qactor( ioport, ctxioport, "external").
   qactor( cargoservice, ctxcargosystem, "it.unibo.cargoservice.Cargoservice").
  static(cargoservice).
   qactor( cargorobot, ctxcargosystem, "it.unibo.cargorobot.Cargorobot").
  static(cargorobot).
-  qactor( ioport, ctxcargosystem, "it.unibo.ioport.Ioport").
- static(ioport).
   qactor( led, ctxcargosystem, "it.unibo.led.Led").
  static(led).
   qactor( sensor, ctxcargosystem, "it.unibo.sensor.Sensor").

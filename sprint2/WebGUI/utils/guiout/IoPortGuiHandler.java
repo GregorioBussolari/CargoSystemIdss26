@@ -37,7 +37,7 @@ import unibo.basicomm23.msg.ApplMessage;
 public class IoPortGuiHandler {
 
     private final String name;
-    private final ActorBasic owner;   // TODO VERIFY: tipo corretto, vedi ActorBasicFsm nel Protobook §17
+    private final ActorBasic owner;   
     private WsContext pageCtx;        // singola connessione: una sola pagina attiva
 
     private String lastState = "disengaged";
@@ -90,7 +90,6 @@ public class IoPortGuiHandler {
             ws.onMessage(ctx -> {
                 String raw = ctx.message();
                 try {
-                    // Usa il costruttore di org.json.JSONObject, è più sicuro
                     JSONObject msg = new JSONObject(raw); 
                     
                     // Verifica se il campo "type" esiste e vale "buttonPressed"
@@ -110,18 +109,12 @@ public class IoPortGuiHandler {
      * Inietta un dispatch buttonPressed nella coda dell'attore ioport,
      * chiamato dal thread Jetty che gestisce onMessage.
      *
-     * TODO VERIFY: firma esatta di autoMsg (nome metodo, tipo parametro,
-     * eventuale necessità di passare mittente/destinatario espliciti,
-     * eventuale metodo statico su un registro globale invece che
-     * sull'istanza dell'attore).
      */
     private void forwardButtonPressed() {
         String rawMsg = "msg(buttonPressed,dispatch,guih," + owner.getName() + ",1,0)";
-        // TODO VERIFY: costruzione messaggio - alternativa con CommUtils.buildDispatch:
         IApplMessage m = CommUtils.buildDispatch("guih", "buttonPressed", "1", owner.getName());
-        //IApplMessage m = new ApplMessage(rawMsg);
         
-        owner.autoMsg(m, null);   // TODO VERIFY: metodo/firma reale
+        owner.autoMsg(m, null);   
     }
 
     /**

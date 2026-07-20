@@ -29,24 +29,26 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		 lateinit var gui: guiout.IoPortGuiHandler  
+		 
+		        lateinit var gui: guiout.IoPortGuiHandler 
+		        lateinit var coapObserver: guiout.CargoServiceCoapObserver
+		        var Num = 0
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						
-							        // Istanza server javalin
-							        val gui = guiout.IoPortGuiHandler("guih", 8050, myself)
-						CommUtils.outmagenta("$name | starts - Avvio Server WebGUI su porta 8050")
+						            gui = guiout.IoPortGuiHandler("guih", 8050, myself)
+						            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="running", cond=doswitch() )
+					 transition( edgeName="goto",targetState="ready", cond=doswitch() )
 				}	 
-				state("running") { //this:State
+				state("ready") { //this:State
 					action { //it:State
-						CommUtils.outmagenta("$name | In attesa di input dall'utente...")
+						CommUtils.outmagenta("$name | [READY] In attesa di input...")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -56,53 +58,28 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
-						CommUtils.outgreen("$name | Bottone premuto! Richiesta inoltrata a CargoService")
-						request("loadRequest", "loadRequest(1)" ,"cargoservice" )  
+						 Num++  
+						CommUtils.outgreen("$name | Bottone premuto! Richiesta inviata")
+						request("loadRequest", "loadRequest($Num)" ,"cargoservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t11",targetState="handleEngaged",cond=whenReply("loadEngaged"))
-					transition(edgeName="t12",targetState="handleReject",cond=whenReply("loadRejected"))
-					transition(edgeName="t13",targetState="handleRetry",cond=whenReply("retryLater"))
+					 transition( edgeName="goto",targetState="engaged", cond=doswitch() )
 				}	 
-				state("handleEngaged") { //this:State
+				state("engaged") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("loadEngaged(SLOT)"), Term.createTerm("loadEngaged(SLOT)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val slotName = payloadArg(0)  
-								CommUtils.outgreen("$name | Carico Accettato: $slotName")
-								 gui.updateState("engaged", "Service working: Carico in $slotName")  
-						}
+						CommUtils.outyellow("$name | [ENGAGED] Richieste disabilitate.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="running", cond=doswitch() )
-				}	 
-				state("handleReject") { //this:State
-					action { //it:State
-						CommUtils.outred("$name | Carico Rifiutato (Hold Piena)")
-						 gui.updateState("disengaged", "Richiesta rifiutata: Hold piena")  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="running", cond=doswitch() )
-				}	 
-				state("handleRetry") { //this:State
-					action { //it:State
-						CommUtils.outred("$name | Sistema occupato, riprovare")
-						 gui.updateState("engaged", "Sistema occupato. Riprovare più tardi.")  
-						//genTimer( actor, state )
-					}
-					//After Lenzi Aug2002
-					sysaction { //it:State
-					}	 	 
-					 transition( edgeName="goto",targetState="running", cond=doswitch() )
+					 transition(edgeName="t11",targetState="ready",cond=whenEvent("loadEnded"))
+					transition(edgeName="t12",targetState="ready",cond=whenEvent("timeOut"))
+					transition(edgeName="t13",targetState="ready",cond=whenReply("loadRejected"))
+					transition(edgeName="t14",targetState="ready",cond=whenReply("retryLater"))
 				}	 
 			}
 		}
