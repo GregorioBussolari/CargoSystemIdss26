@@ -1,60 +1,89 @@
 System webgui
 
-// Dichiarazione dei messaggi di interfaccia
-Dispatch buttonPressed    : buttonPressed(X)         "Pressione bottone da GUI"
-Request  loadRequest      : loadRequest(X)           "Richiesta di carico verso CargoService"
-Reply    loadEngaged      : loadEngaged(SLOT)        for loadRequest
-Reply    retryLater       : retryLater(X)            for loadRequest
-Reply    loadRejected     : loadRejected(X)          for loadRequest
+//Messaggi di interfaccia
+Dispatch buttonPressed      : buttonPressed(X)          "Pressione bottone da GUI"
+Request  loadRequest        : loadRequest(X)             "Richiesta di carico verso CargoService"
+Reply    loadEngaged        : loadEngaged(SLOT)          for loadRequest
+Reply    retryLater         : retryLater(X)              for loadRequest
+Reply    loadRejected       : loadRejected(X)             for loadRequest
+Dispatch cargoStateChanged  : cargoStateChanged(STATE)   "Notifica stato ricevuta via CoAP"
 
-Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 secondi"
-Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
-
-// Contesti
 Context ctxioport 		ip [host="localhost" port=8040]
 Context ctxcargosystem  ip [host="127.0.0.1" port=8120]
 
 ExternalQActor cargoservice context ctxcargosystem
 
 QActor ioport context ctxioport {
-    [# 
-        lateinit var gui: guiout.IoPortGuiHandler 
+    [#
+        lateinit var gui: guiout.IoPortGuiHandler
         lateinit var coapObserver: guiout.CargoServiceCoapObserver
         var Num = 0
-    #] 
+        var LastState = "disengaged"
+    #]
 
     State s0 initial {
         [#
             gui = guiout.IoPortGuiHandler("guih", 8050, myself)
-            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui)
+            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui, myself)
         #]
     }
     Goto ready
 
-    // Stato in cui il bottone è attivo
     State ready {
         println("$name | [READY] In attesa di input...") color magenta
     }
     Transition t0
         whenMsg buttonPressed -> handleButtonPressed
+        whenMsg cargoStateChanged -> handleStateChanged
 
     State handleButtonPressed {
         [# Num++ #]
-        println("$name | Bottone premuto! Richiesta inviata") color green
+        println("$name | Bottone premuto! Richiesta inviata.") color green
         request cargoservice -m loadRequest : loadRequest($Num)
     }
-    // Passiamo subito a uno stato "blindato"
-    Goto engaged
-
-    // Stato in cui il bottone NON è tra le transition (quindi le richieste sono ignorate)
-    State engaged {
-        println("$name | [ENGAGED] Richieste disabilitate.") color yellow
-    }
     Transition t1
-        // Solo quando CargoService ci notifica la fine, torniamo in ready
-        whenEvent loadEnded -> ready
-        whenEvent timeOut   -> ready
-        // Eventualmente gestire anche il fallimento/rifiuto se necessario
+        whenReply loadEngaged  -> engaged
         whenReply loadRejected -> ready
         whenReply retryLater   -> ready
+
+    // -------------------------------------------------------------
+    // STATI DI BLOCCO (Engaged e OOS)
+    // -------------------------------------------------------------
+    State engaged {
+        println("$name | [ENGAGED] Sistema occupato.") color yellow
+    }
+    Transition t2
+        whenMsg buttonPressed -> discardButtonPressed 
+        whenMsg cargoStateChanged -> handleStateChanged
+
+    State outOfServiceIOPort {
+        println("$name | [OOS] Sistema fuori servizio. ") color red
+    }
+    Transition t4
+        whenMsg buttonPressed -> discardButtonPressed
+        whenMsg cargoStateChanged -> handleStateChanged
+
+    // -------------------------------------------------------------
+    // DISCARD REQUEST
+    // -------------------------------------------------------------
+    State discardButtonPressed {
+        println("$name | Richiesta scartata") color yellow
+    }
+    Goto outOfServiceIOPort if [# LastState == "outofservice" #] else engaged
+
+    // -------------------------------------------------------------
+    // HUB DI ROUTING DEGLI STATI
+    // -------------------------------------------------------------
+    State handleStateChanged {
+        onMsg(cargoStateChanged : cargoStateChanged(STATE)) {
+            [# 
+                LastState = payloadArg(0).replace("\"", "").trim() 
+            #]
+            println("$name | Stato CargoService aggiornato: $LastState.") color cyan
+        }
+    }
+    Goto outOfServiceIOPort if [# LastState == "outofservice" #] else nextByState
+    
+    State nextByState { }
+    Goto engaged if [# LastState == "engaged" #] else ready
 }

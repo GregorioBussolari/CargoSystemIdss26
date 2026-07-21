@@ -29,16 +29,17 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//val interruptedStateTransitions = mutableListOf<Transition>()
 		//IF actor.withobj !== null val actor.withobj.name� = actor.withobj.method�ENDIF
-		 
-		        lateinit var gui: guiout.IoPortGuiHandler 
+		
+		        lateinit var gui: guiout.IoPortGuiHandler
 		        lateinit var coapObserver: guiout.CargoServiceCoapObserver
 		        var Num = 0
+		        var LastState = "disengaged"
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						
 						            gui = guiout.IoPortGuiHandler("guih", 8050, myself)
-						            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui)
+						            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui, myself)
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
@@ -55,31 +56,86 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					sysaction { //it:State
 					}	 	 
 					 transition(edgeName="t00",targetState="handleButtonPressed",cond=whenDispatch("buttonPressed"))
+					transition(edgeName="t01",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
 				}	 
 				state("handleButtonPressed") { //this:State
 					action { //it:State
 						 Num++  
-						CommUtils.outgreen("$name | Bottone premuto! Richiesta inviata")
+						CommUtils.outgreen("$name | Bottone premuto! Richiesta inviata.")
 						request("loadRequest", "loadRequest($Num)" ,"cargoservice" )  
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition( edgeName="goto",targetState="engaged", cond=doswitch() )
+					 transition(edgeName="t12",targetState="engaged",cond=whenReply("loadEngaged"))
+					transition(edgeName="t13",targetState="ready",cond=whenReply("loadRejected"))
+					transition(edgeName="t14",targetState="ready",cond=whenReply("retryLater"))
 				}	 
 				state("engaged") { //this:State
 					action { //it:State
-						CommUtils.outyellow("$name | [ENGAGED] Richieste disabilitate.")
+						CommUtils.outyellow("$name | [ENGAGED] Sistema occupato.")
 						//genTimer( actor, state )
 					}
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t11",targetState="ready",cond=whenEvent("loadEnded"))
-					transition(edgeName="t12",targetState="ready",cond=whenEvent("timeOut"))
-					transition(edgeName="t13",targetState="ready",cond=whenReply("loadRejected"))
-					transition(edgeName="t14",targetState="ready",cond=whenReply("retryLater"))
+					 transition(edgeName="t25",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
+					transition(edgeName="t26",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
+				}	 
+				state("outOfServiceIOPort") { //this:State
+					action { //it:State
+						CommUtils.outred("$name | [OOS] Sistema fuori servizio. ")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition(edgeName="t47",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
+					transition(edgeName="t48",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
+				}	 
+				state("discardButtonPressed") { //this:State
+					action { //it:State
+						CommUtils.outyellow("$name | Richiesta scartata")
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="outOfServiceIOPort", cond=doswitchGuarded({ LastState == "outofservice"  
+					}) )
+					transition( edgeName="goto",targetState="engaged", cond=doswitchGuarded({! ( LastState == "outofservice"  
+					) }) )
+				}	 
+				state("handleStateChanged") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("cargoStateChanged(STATE)"), Term.createTerm("cargoStateChanged(STATE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								 
+								                LastState = payloadArg(0).replace("\"", "").trim() 
+								CommUtils.outcyan("$name | Stato CargoService aggiornato: $LastState.")
+						}
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="outOfServiceIOPort", cond=doswitchGuarded({ LastState == "outofservice"  
+					}) )
+					transition( edgeName="goto",targetState="nextByState", cond=doswitchGuarded({! ( LastState == "outofservice"  
+					) }) )
+				}	 
+				state("nextByState") { //this:State
+					action { //it:State
+						//genTimer( actor, state )
+					}
+					//After Lenzi Aug2002
+					sysaction { //it:State
+					}	 	 
+					 transition( edgeName="goto",targetState="engaged", cond=doswitchGuarded({ LastState == "engaged"  
+					}) )
+					transition( edgeName="goto",targetState="ready", cond=doswitchGuarded({! ( LastState == "engaged"  
+					) }) )
 				}	 
 			}
 		}

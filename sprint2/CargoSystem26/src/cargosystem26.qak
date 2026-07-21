@@ -71,13 +71,13 @@ QActor cargoservice context ctxcargosystem
     Goto idle
 
     State idle {
-        [# engaged = false 
-           val holdState = hold.toString()
-           val JsonMsg = "{\"state\":\"disengaged\", \"message\":\"Service working - In attesa di richieste\", \"hold\":\"$holdState\"}" 
-        #]
-        println("$name | [DISENGAGED] attendo request") color green
-        updateResource [# JsonMsg #]
-    }
+	    [# engaged = false 
+	       val holdState = hold.toString().replace("\n", "\\n").replace("\"", "\\\"")
+	       val JsonMsg = "{\"state\":\"disengaged\", \"message\":\"Service working - In attesa di richieste\", \"hold\":\"$holdState\"}" 
+	    #]
+	    println("$name | [DISENGAGED] attendo request") color green
+	    updateResource [# JsonMsg #]
+	}
     Transition t0
         whenRequest loadRequest -> handleLoadRequest
         whenInterruptEvent sensorAlarm -> handleAlarm        
@@ -91,7 +91,7 @@ QActor cargoservice context ctxcargosystem
 	    		SlotTarget = freeSlot	
 	    		val SlotTargetId = freeSlot?.getName() ?: "Unknown"
 	    		engaged = true
-                val holdState = hold.toString()
+                val holdState = hold.toString().replace("\n", "\\n")
 	    		val JsonMsg = "{\"state\":\"engaged\", \"message\":\"Service working - Slot assegnato: $SlotTargetId\", \"hold\":\"$holdState\"}" 
 	    	#]
 	        replyTo loadRequest with loadEngaged : loadEngaged($SlotTargetId)
@@ -122,7 +122,7 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [DISENGAGED] Timeout 30s scaduto, back to disengaged") color red
 		[#
             engaged = false
-            val holdState = hold.toString()
+            val holdState = hold.toString().replace("\n", "\\n")
        		val JsonMsg = "{\"state\":\"disengaged\", \"message\":\"Richiesta fallita: tempo scaduto (30s)\", \"hold\":\"$holdState\"}" 
        	#]
         updateResource [# JsonMsg #]
@@ -176,7 +176,7 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [DISENGAGED] container depositato con successo nello slot $SlotTarget") color green 
 		[#
 			SlotTarget?.putContainer()
-			val holdState = hold.toString()
+			val holdState = hold.toString().replace("\n", "\\n")
 			engaged = false
 			val slotName = SlotTarget?.getName() ?: "Unknown"
 			val JsonMsg = "{\"state\":\"disengaged\", \"message\":\"Carico completato: slot $slotName\", \"hold\":\"$holdState\"}"
@@ -192,7 +192,7 @@ QActor cargoservice context ctxcargosystem
 		println("$name | [DISENGAGED] deposito fallito") color red
 		[# 
 			engaged = false 
-            val holdState = hold.toString()
+            val holdState = hold.toString().replace("\n", "\\n")
 			val JsonMsg = "{\"state\":\"disengaged\", \"message\":\"Errore: deposito fallito\", \"hold\":\"$holdState\"}"
 		#]
 		updateResource [# JsonMsg #]
@@ -211,7 +211,7 @@ QActor cargoservice context ctxcargosystem
         forward cargorobot -m startOOS : startOOS(0)
         println("$name | [OUT OF SERVICE] Sistema in allarme") color red
         [# 
-            val holdState = hold.toString()
+            val holdState = hold.toString().replace("\n", "\\n")
             val JsonMsg = "{\"state\":\"outofservice\", \"message\":\"Out of service\", \"hold\":\"$holdState\"}"
         #]
         updateResource [# JsonMsg #]    
