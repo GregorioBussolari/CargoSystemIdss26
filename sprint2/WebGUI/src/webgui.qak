@@ -1,2 +1,60 @@
 System webgui
- 
+
+// Dichiarazione dei messaggi di interfaccia
+Dispatch buttonPressed    : buttonPressed(X)         "Pressione bottone da GUI"
+Request  loadRequest      : loadRequest(X)           "Richiesta di carico verso CargoService"
+Reply    loadEngaged      : loadEngaged(SLOT)        for loadRequest
+Reply    retryLater       : retryLater(X)            for loadRequest
+Reply    loadRejected     : loadRejected(X)          for loadRequest
+
+Event    timeOut          : timeOut(X)              "Scadenza regola dei 30 secondi"
+Event    loadEnded        : loadEnded(X)            "Fine procedura di carico"
+
+// Contesti
+Context ctxioport 		ip [host="localhost" port=8040]
+Context ctxcargosystem  ip [host="127.0.0.1" port=8120]
+
+ExternalQActor cargoservice context ctxcargosystem
+
+QActor ioport context ctxioport {
+    [# 
+        lateinit var gui: guiout.IoPortGuiHandler 
+        lateinit var coapObserver: guiout.CargoServiceCoapObserver
+        var Num = 0
+    #] 
+
+    State s0 initial {
+        [#
+            gui = guiout.IoPortGuiHandler("guih", 8050, myself)
+            coapObserver = guiout.CargoServiceCoapObserver("127.0.0.1", 8120, "ctxcargosystem", "cargoservice", gui)
+        #]
+    }
+    Goto ready
+
+    // Stato in cui il bottone è attivo
+    State ready {
+        println("$name | [READY] In attesa di input...") color magenta
+    }
+    Transition t0
+        whenMsg buttonPressed -> handleButtonPressed
+
+    State handleButtonPressed {
+        [# Num++ #]
+        println("$name | Bottone premuto! Richiesta inviata") color green
+        request cargoservice -m loadRequest : loadRequest($Num)
+    }
+    // Passiamo subito a uno stato "blindato"
+    Goto engaged
+
+    // Stato in cui il bottone NON è tra le transition (quindi le richieste sono ignorate)
+    State engaged {
+        println("$name | [ENGAGED] Richieste disabilitate.") color yellow
+    }
+    Transition t1
+        // Solo quando CargoService ci notifica la fine, torniamo in ready
+        whenEvent loadEnded -> ready
+        whenEvent timeOut   -> ready
+        // Eventualmente gestire anche il fallimento/rifiuto se necessario
+        whenReply loadRejected -> ready
+        whenReply retryLater   -> ready
+}

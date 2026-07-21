@@ -21,15 +21,13 @@ evattr = {
     'color': 'darkgreen',
     'style': 'dotted'
 }
-with Diagram('webguiArch', show=False, outformat='png', graph_attr=graphattr) as diag:
+with Diagram('testobserverioportArch', show=False, outformat='png', graph_attr=graphattr) as diag:
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index
+     with Cluster('ctxcargo', graph_attr=nodeattr):
+          cargoservice=Custom('cargoservice(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxioport', graph_attr=nodeattr):
           ioport=Custom('ioport','./qakicons/symActorWithobjSmall.png')
-     with Cluster('ctxcargosystem', graph_attr=nodeattr):
-          cargoservice=Custom('cargoservice(ext)','./qakicons/externalQActor.png')
-     sys >> Edge( label='loadEnded', **evattr, decorate='true', fontcolor='darkgreen') >> ioport
-     sys >> Edge( label='timeOut', **evattr, decorate='true', fontcolor='darkgreen') >> ioport
-     ioport >> Edge(color='magenta', style='solid', decorate='true', label='<loadRequest<font color="darkgreen"> loadEngaged retryLater loadRejected</font> &nbsp; >',  fontcolor='magenta') >> cargoservice
+     cargoservice >> Edge(color='blue', style='solid',  decorate='true', label='<info &nbsp; >',  fontcolor='blue') >> ioport
 diag

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo System | IOPort</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="glass-panel">
+        <div class="header">
+            <h1>IOPort <span>Terminal</span></h1>
+            <div class="status-indicator">
+                <span class="dot"></span>
+                <span id="connectionStatus">Connessione in corso...</span>
+            </div>
+        </div>
+
+        <div id="displayArea" class="display-card disengaged">
+            <div class="display-label">SYSTEM STATUS</div>
+            <div id="displayMessage" class="display-text">Inizializzazione sistema...</div>
+        </div>
+
+        <div class="action-area">
+            <button id="btnLoad" class="cyber-button" onclick="sendLoadRequest()">
+                <span class="btn-text">REQUEST LOAD</span>
+                <span class="btn-glitch"></span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
