@@ -1,0 +1,28 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:1.6.15
+    container_name: mosquitto
+    ports:
+        - "1883:1883"
+        - "9001:9001"
+    restart: always		
+    networks:
+        - iss-network
+
+  cargosystem:
+    container_name: cargosystem
+    image: cargosystem:1.0
+    mem_limit: 512m
+    ports:
+      - "8120:8120/tcp"
+      - "8120:8120/udp"
+    environment:
+      - MQTTBROKER=mosquitto
+    depends_on:
+      - mosquitto
+    networks:
+      - iss-network
+
+networks:
+  iss-network:
+    external: true

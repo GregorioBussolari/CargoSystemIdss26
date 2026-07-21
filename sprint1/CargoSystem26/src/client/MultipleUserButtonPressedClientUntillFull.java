@@ -44,7 +44,7 @@ public class MultipleUserButtonPressedClientUntillFull {
            CommUtils.outblue(name + " | test1 sent "+i+1+" buttonPressed to ioport");
            
            // 2. Attesa
-           int delayTime = 45000;
+           int delayTime = 50000;
            CommUtils.outblue(name + " | waiting for " + delayTime + " ms before "+i+1+" press...");
            CommUtils.delay(delayTime);   
        }
