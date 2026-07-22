@@ -1,0 +1,22 @@
+# docker-compose.yml (Nodo Frontend / WebGUI)
+version: '3.8'
+
+services:
+  webgui:
+    container_name: webgui
+    hostname: webgui
+    image: webgui:1.0
+    mem_limit: 512m
+    ports:
+      - "8050:8050/tcp"   # Porta per accedere al sito dal browser
+      - "8040:8040/tcp"   # Porta di comunicazione QAk (TCP)
+      - "8040:8040/udp"   # Porta di comunicazione QAk (UDP)
+    environment:
+      # Se la tua WebGUI ha bisogno di sapere dov'è il broker MQTT:
+      - MQTTBROKER=mosquitto
+    networks:
+      - iss-network
+
+networks:
+  iss-network:
+    external: true

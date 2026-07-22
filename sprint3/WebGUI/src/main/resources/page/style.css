@@ -1,0 +1,163 @@
+:root {
+    --bg-color: #0b0c10;
+    --panel-bg: rgba(26, 26, 46, 0.85);
+    --text-main: #c5c6c7;
+    --neon-blue: #66fcf1;
+    --neon-green: #45f248;
+    --neon-red: #ff3366;
+    --neon-yellow: #ffde00;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at center, #1a1a2e 0%, #0b0c10 100%);
+    color: var(--text-main);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(102, 252, 241, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    width: 400px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(102, 252, 241, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.header h1 {
+    font-family: 'Orbitron', sans-serif;
+    margin: 0 0 10px 0;
+    font-size: 1.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.header h1 span {
+    color: var(--neon-blue);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #888;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #888;
+}
+
+.connected .dot {
+    background-color: var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+/* Display Area */
+.display-card {
+    background: #111;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid var(--text-main);
+    transition: all 0.4s ease;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.display-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: #666;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.display-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+}
+
+/* Stati Dinamici */
+.disengaged {
+    border-left-color: var(--neon-blue);
+    box-shadow: -5px 0 15px rgba(102, 252, 241, 0.1);
+}
+
+.engaged {
+    border-left-color: var(--neon-green);
+    box-shadow: -5px 0 15px rgba(69, 242, 72, 0.2);
+}
+
+.engaged .display-text {
+    color: var(--neon-green);
+    text-shadow: 0 0 5px rgba(69, 242, 72, 0.5);
+}
+
+.outofservice {
+    border-left-color: var(--neon-red);
+    box-shadow: -5px 0 15px rgba(255, 51, 102, 0.2);
+}
+
+.outofservice .display-text {
+    color: var(--neon-red);
+    text-shadow: 0 0 5px rgba(255, 51, 102, 0.5);
+}
+
+.slot {
+    border-left-color: var(--neon-yellow);
+    box-shadow: -5px 0 15px rgba(255, 222, 0, 0.2);
+}
+
+.slot .display-text {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 5px rgba(255, 222, 0, 0.5);
+}
+
+/* Cyber Button */
+.cyber-button {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    border-radius: 4px;
+    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.cyber-button:hover {
+    background: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.4);
+}
+
+.cyber-button:active {
+    transform: scale(0.98);
+}

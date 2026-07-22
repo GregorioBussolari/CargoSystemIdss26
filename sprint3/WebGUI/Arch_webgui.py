@@ -25,4 +25,9 @@ with Diagram('webguiArch', show=False, outformat='png', graph_attr=graphattr) as
   with Cluster('env'):
      sys = Custom('','./qakicons/system.png')
 ### see https://renenyffenegger.ch/notes/tools/Graphviz/attributes/label/HTML-like/index
+     with Cluster('ctxioport', graph_attr=nodeattr):
+          ioport=Custom('ioport','./qakicons/symActorWithobjSmall.png')
+     with Cluster('ctxcargosystem', graph_attr=nodeattr):
+          cargoservice=Custom('cargoservice(ext)','./qakicons/externalQActor.png')
+     ioport >> Edge(color='magenta', style='solid', decorate='true', label='<loadRequest<font color="darkgreen"> loadEngaged retryLater loadRejected</font> &nbsp; >',  fontcolor='magenta') >> cargoservice
 diag

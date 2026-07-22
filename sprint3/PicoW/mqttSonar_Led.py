@@ -113,45 +113,51 @@ try:
     connect_wifi()
     client = connect_mqtt()
     
-    # Il Pico si iscrive ESCLUSIVAMENTE al topic dedicato al LED
     client.subscribe(TOPIC_SUB)
     print(f"MQTT iscritto al topic '{TOPIC_SUB.decode()}' e pronto")
     ledOnOff(5, 0.3)
 
     while True:
         now = time.ticks_ms()
+        
+        try:
+            # 1. attività "sonar"
+            if time.ticks_diff(now, last_sonar) >= SONAR_PERIOD_MS:
+                last_sonar = now
+                d = misura_distanza()
+                if d is not None:
+                    value = "sonardata(%d)" % round(d)
+                    msg_payload = "msg(sonardata,event,picow,none,%s,0)" % value
+                    
+                    print(f"Publish su {TOPIC_PUB.decode()}: {msg_payload}")
+                    client.publish(TOPIC_PUB, msg_payload.encode())
 
-        # 1. attività "sonar": pubblica ogni SONAR_PERIOD_MS
-        if time.ticks_diff(now, last_sonar) >= SONAR_PERIOD_MS:
-            last_sonar = now
-            d = misura_distanza()
-            if d is not None:
-                value = "sonardata(%d)" % round(d)
-                # Formattato come Evento QAk: destinatario = none
-                msg_payload = "msg(sonardata,event,picow,none,%s,0)" % value
-                
-                print(f"Publish su {TOPIC_PUB.decode()}: {msg_payload}")
-                # Pubblica ESCLUSIVAMENTE sul topic dedicato ai dati del sonar
-                client.publish(TOPIC_PUB, msg_payload.encode())
+            # 2. attività "led"
+            if blinking and time.ticks_diff(now, last_toggle) >= BLINK_PERIOD_MS:
+                last_toggle = now
+                led.toggle()
 
-        # 2. attività "led": lampeggia ogni BLINK_PERIOD_MS, solo se attivo
-        if blinking and time.ticks_diff(now, last_toggle) >= BLINK_PERIOD_MS:
-            last_toggle = now
-            led.toggle()
+            # 3. controlla messaggi
+            client.check_msg()
 
-        # 3. controlla se sono arrivati comandi (startBlink/stopBlink)
-        client.check_msg()
+        except OSError as e:
+            # Se la rete cade, l'errore viene catturato QUI, senza rompere il "while True"
+            print(f"Errore di rete rilevato nel loop: {e}")
+            reconnect_mqtt()
+            
+            # Resetta i timer per evitare che, appena riconnesso, 
+            # pubblichi dati istantaneamente con tempi sballati
+            last_sonar = time.ticks_ms()
+            last_toggle = time.ticks_ms()
 
         time.sleep_ms(20)  
 
+# Questi except esterni ora catturano solo gli stop manuali o errori gravissimi non di rete
 except KeyboardInterrupt:
     print("\nProgramma interrotto manualmente")
-except OSError as e:
-            print(f"Errore di rete rilevato nel loop: {e}")
-            reconnect_mqtt()  # Ferma tutto e tenta la riconnessione
 except Exception as e:
     print(f"\nÈ successo qualcosa di imprevisto: {type(e).__name__} - {e}")
 finally:
-
     led.off()
     print("Terminato e LED spento.")
+
