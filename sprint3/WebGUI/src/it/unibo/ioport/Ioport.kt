@@ -71,6 +71,7 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					 transition(edgeName="t12",targetState="engaged",cond=whenReply("loadEngaged"))
 					transition(edgeName="t13",targetState="ready",cond=whenReply("loadRejected"))
 					transition(edgeName="t14",targetState="ready",cond=whenReply("retryLater"))
+					transition(edgeName="t15",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
 				}	 
 				state("engaged") { //this:State
 					action { //it:State
@@ -80,8 +81,8 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t25",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
-					transition(edgeName="t26",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
+					 transition(edgeName="t26",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
+					transition(edgeName="t27",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
 				}	 
 				state("outOfServiceIOPort") { //this:State
 					action { //it:State
@@ -91,8 +92,8 @@ class Ioport ( name: String, scope: CoroutineScope, isconfined: Boolean=false, i
 					//After Lenzi Aug2002
 					sysaction { //it:State
 					}	 	 
-					 transition(edgeName="t47",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
-					transition(edgeName="t48",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
+					 transition(edgeName="t48",targetState="discardButtonPressed",cond=whenDispatch("buttonPressed"))
+					transition(edgeName="t49",targetState="handleStateChanged",cond=whenDispatch("cargoStateChanged"))
 				}	 
 				state("discardButtonPressed") { //this:State
 					action { //it:State

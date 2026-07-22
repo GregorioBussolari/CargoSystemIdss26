@@ -54,7 +54,7 @@ public class IoPortGuiHandler {
                 factory.setIdleTimeout(Duration.ofMinutes(30));
             });
             config.staticFiles.add(staticFiles -> {
-                staticFiles.directory = "/page";
+                staticFiles.directory = "page";
                 staticFiles.location = Location.CLASSPATH;
             });
         }).start(port);

@@ -6,6 +6,9 @@ services:
     container_name: webgui
     hostname: webgui
     image: webgui:1.0
+    build: 
+      context: ../
+      dockerfile: Dockerfile
     mem_limit: 512m
     ports:
       - "8050:8050/tcp"   # Porta per accedere al sito dal browser

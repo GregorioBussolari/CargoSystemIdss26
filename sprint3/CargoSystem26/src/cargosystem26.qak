@@ -54,7 +54,7 @@ Reply movetoslotfailed: movetoslotfailed(PLANDONE, PLANTODO) for movetoslot
 Context ctxcargosystem ip [host="localhost" port=8120]
 Context ctxrobotsmart ip [host="robotsmart26" port=8020]
 Context ctxioport 	   ip [host="webgui" port=8040] 
-//Context ctxrobotsmart ip [host="127.0.0.1" port=8020] 
+//Context ctxrobotsmart ip [host="127.0.0.1" port=8020]
 //Context ctxsensor         ip [host="localhost" port=8135]
 
 // robotsmart26 fornito dal committente
