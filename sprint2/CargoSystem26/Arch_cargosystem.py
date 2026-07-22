@@ -41,6 +41,7 @@ with Diagram('cargosystemArch', show=False, outformat='png', graph_attr=graphatt
      cargoservice >> Edge( label='loadEnded', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='sensorRestored', **evattr, decorate='true', fontcolor='darkgreen') >> cargoservice
      cargorobot >> Edge( label='alarm', **eventedgeattr, decorate='true', fontcolor='red') >> sys
+     cargorobot >> Edge( label='loadEnded', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='startSensorRecording', **evattr, decorate='true', fontcolor='darkgreen') >> sensor
      sensor >> Edge( label='containerDetected', **eventedgeattr, decorate='true', fontcolor='red') >> sys
      sys >> Edge( label='timeOut', **evattr, decorate='true', fontcolor='darkgreen') >> sensor
@@ -48,5 +49,5 @@ with Diagram('cargosystemArch', show=False, outformat='png', graph_attr=graphatt
      cargorobot >> Edge(color='magenta', style='solid', decorate='true', label='<moverobot<font color="darkgreen"> moverobotdone moverobotfailed</font> &nbsp; >',  fontcolor='magenta') >> robotsmart
      cargoservice >> Edge(color='magenta', style='solid', decorate='true', label='<movetoslot<font color="darkgreen"> movetoslotdone movetoslotfailed</font> &nbsp; >',  fontcolor='magenta') >> cargorobot
      cargoservice >> Edge(color='blue', style='solid',  decorate='true', label='<startBlink &nbsp; stopBlink &nbsp; >',  fontcolor='blue') >> led
-     cargoservice >> Edge(color='blue', style='solid',  decorate='true', label='<startOOS &nbsp; endOOS &nbsp; >',  fontcolor='blue') >> cargorobot
+     cargoservice >> Edge(color='blue', style='solid',  decorate='true', label='<endOOS &nbsp; startOOS &nbsp; >',  fontcolor='blue') >> cargorobot
 diag
