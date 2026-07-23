@@ -11,6 +11,7 @@ Dispatch cargoStateChanged  : cargoStateChanged(STATE)   "Notifica stato ricevut
 Context ctxioport 		ip [host="localhost" port=8040]
 Context ctxcargosystem  ip [host="cargosystem" port=8120]
 
+
 ExternalQActor cargoservice context ctxcargosystem
 
 QActor ioport context ctxioport {
@@ -32,7 +33,7 @@ QActor ioport context ctxioport {
     State ready {
         println("$name | [READY] In attesa di input...") color magenta
     }
-    Transition t0
+    Transition t0 
         whenMsg buttonPressed -> handleButtonPressed
         whenMsg cargoStateChanged -> handleStateChanged
 

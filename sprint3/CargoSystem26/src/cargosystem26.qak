@@ -43,7 +43,6 @@ Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink 
 // ---Gestione Sensor MOCK ---
 Event startSensorRecording : startSensortRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
 
-
 // --- IOPort <-> CargoService ---
 Request movetoslot : movetoslot(SLOTN)				"Richiesta di spostamento, Data la stringa identificativa dello slot"
 Reply movetoslotdone : movetoslottdone(ARG) for movetoslot
@@ -59,7 +58,7 @@ Context ctxioport 	   ip [host="webgui" port=8040]
 
 // robotsmart26 fornito dal committente
 ExternalQActor robotsmart context ctxrobotsmart
-ExternalQActor ioport context ctxioport
+ExternalQActor ioport context  ctxioport
 
 QActor cargoservice context ctxcargosystem 
     withobj hold using "domain.HoldManager(\"properties.txt\")"{

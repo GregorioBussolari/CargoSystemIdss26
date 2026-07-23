@@ -15,6 +15,7 @@ WORKDIR /cargosystem-1.0/bin
 ## Copia i file di configurazione Prolog, JSON o testo necessari a runtime
 COPY ./*.pl ./
 COPY ./Californium3.properties ./
+COPY ./properties.txt ./
 
 ## Comando di avvio dell'applicazione QAk
 CMD ["bash", "cargosystem"]
