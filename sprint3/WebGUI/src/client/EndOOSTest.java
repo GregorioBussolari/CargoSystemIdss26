@@ -1,4 +1,4 @@
-	package Client;
+	package client;
 	
 	import unibo.basicomm23.interfaces.Interaction;
 	import unibo.basicomm23.msg.ProtocolType;
