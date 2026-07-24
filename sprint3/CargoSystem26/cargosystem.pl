@@ -24,9 +24,9 @@ event( sensorRestored, sensorRestored(X) ). %Emesso se D < DFREE per 3s
 event( sonardata, sonardata(D) ). %distanza grezza pubblicata dal PicoW
 dispatch( startBlink, startBlink(X) ). %Gestione accensione blink LED
 dispatch( stopBlink, stopBlink(X) ). %Gestione spegnimento blink LED
-event( startSensorRecording, startSensortRecording(X) ). %Inizio fase di rilevazione dei 30 secondi
+event( startSensorRecording, startSensorRecording(X) ). %Inizio fase di rilevazione dei 30 secondi
 request( movetoslot, movetoslot(SLOTN) ). %Richiesta di spostamento, Data la stringa identificativa dello slot
-reply( movetoslotdone, movetoslottdone(ARG) ).  %%for movetoslot
+reply( movetoslotdone, movetoslotdone(ARG) ).  %%for movetoslot
 reply( movetoslotfailed, movetoslotfailed(PLANDONE,PLANTODO) ).  %%for movetoslot
 %====================================================================================
 context(ctxcargosystem, "localhost",  "TCP", "8120").

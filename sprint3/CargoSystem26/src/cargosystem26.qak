@@ -41,11 +41,11 @@ Dispatch stopBlink        : stopBlink(X)            "Gestione spegnimento blink 
 
 
 // ---Gestione Sensor MOCK ---
-Event startSensorRecording : startSensortRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
+Event startSensorRecording : startSensorRecording(X)  "Inizio fase di rilevazione dei 30 secondi"
 
 // --- IOPort <-> CargoService ---
 Request movetoslot : movetoslot(SLOTN)				"Richiesta di spostamento, Data la stringa identificativa dello slot"
-Reply movetoslotdone : movetoslottdone(ARG) for movetoslot
+Reply movetoslotdone : movetoslotdone(ARG) for movetoslot
 Reply movetoslotfailed: movetoslotfailed(PLANDONE, PLANTODO) for movetoslot
 
 // --- Contesti ---
@@ -123,7 +123,7 @@ QActor cargoservice context ctxcargosystem
 	
 	State waitingContainer {
 		 println("$name | [ENGAGED] attendo container entro 30s") color magenta
-		 //emit startSensorRecording : startSensortRecording(1)
+		 //emit startSensorRecording : startSensorRecording(1)
 	}
 	Transition t1
  		whenTime 30000 -> handleTimeoutExpired

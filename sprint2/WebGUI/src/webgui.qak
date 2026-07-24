@@ -45,6 +45,7 @@ QActor ioport context ctxioport {
         whenReply loadEngaged  -> engaged
         whenReply loadRejected -> ready
         whenReply retryLater   -> ready
+        whenMsg cargoStateChanged -> handleStateChanged
 
     // -------------------------------------------------------------
     // STATI DI BLOCCO (Engaged e OOS)
